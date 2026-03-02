@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quirología · Selene Aura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   PALETTE — Cosmos Blue + Flower Knows Gold
+   ═══════════════════════════════════════ */
+:root {
+  --bg: #070A12;
+  --bg2: #0B1120;
+  --card: #0F1628;
+  --card-hover: #131C34;
+  --gold: #C9A84C;
+  --gold-light: #E2CA7A;
+  --gold-dim: rgba(201,168,76,0.2);
+  --gold-glow: rgba(201,168,76,0.08);
+  --gold-line: rgba(201,168,76,0.15);
+  --blue: #4A7BD4;
+  --blue-deep: #2A4A8A;
+  --blue-pale: #8BB3E8;
+  --blue-dim: rgba(74,123,212,0.15);
+  --blue-glow: rgba(74,123,212,0.08);
+  --violet: #7C6DB0;
+  --violet-dim: rgba(124,109,176,0.18);
+  --teal: #5AB8A6;
+  --teal-dim: rgba(90,184,166,0.15);
+  --rose: #C4687E;
+  --rose-dim: rgba(196,104,126,0.15);
+  --white: #F0EDE4;
+  --white-dim: rgba(240,237,228,0.55);
+  --text: #D8D3C8;
+  --text-mid: #9A9487;
+  --text-dim: #5E5A52;
+  --border: rgba(201,168,76,0.08);
+  --border-light: rgba(255,255,255,0.05);
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Outfit', -apple-system, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ ATMOSPHERIC BACKGROUND ═══ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(42,74,138,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(124,109,176,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.03) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { max-width: 480px; margin: 0 auto; min-height: 100dvh; position: relative; z-index: 1; }
+
+.screen { display: none; min-height: 100dvh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ═══ ORNAMENTAL DIVIDER (Flower Knows style) ═══ */
+.ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin: 20px 0; opacity: 0.4;
+}
+.ornament::before, .ornament::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.ornament span { color: var(--gold); font-size: 10px; letter-spacing: 4px; }
+
+.ornament-sm {
+  display: block; text-align: center; margin: 12px 0;
+  color: var(--gold); font-size: 8px; letter-spacing: 6px; opacity: 0.35;
+}
+
+/* ═══ BUTTONS ═══ */
+.btn-primary {
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--bg); background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border: none; border-radius: 2px; padding: 18px 48px; cursor: pointer;
+  transition: all 0.3s; box-shadow: 0 2px 20px rgba(201,168,76,0.2);
+  width: 100%; position: relative;
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: -1px;
+  border: 1px solid var(--gold); border-radius: 2px;
+  opacity: 0.3;
+}
+.btn-primary:hover { box-shadow: 0 4px 30px rgba(201,168,76,0.3); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.5px; color: var(--gold);
+  background: transparent; border: 1px solid var(--gold-line);
+  border-radius: 2px; padding: 14px 32px; cursor: pointer;
+  transition: all 0.3s; width: 100%;
+}
+.btn-secondary:hover { background: var(--gold-glow); border-color: rgba(201,168,76,0.3); }
+
+.btn-ghost {
+  font-family: var(--sans); font-size: 11px; color: var(--text-dim);
+  background: none; border: none; padding: 10px; cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.btn-ghost:hover { color: var(--text-mid); }
+
+.back-btn {
+  position: fixed; top: 16px; left: 16px;
+  background: rgba(7,10,18,0.85); border: 1px solid var(--border);
+  color: var(--text-mid); font-size: 12px; font-family: var(--sans);
+  padding: 8px 14px; border-radius: 2px; cursor: pointer;
+  backdrop-filter: blur(12px); z-index: 100;
+  letter-spacing: 0.5px;
+}
+
+/* ═══ SCREEN 1: INTRO ═══ */
+.intro {
+  justify-content: center; align-items: center; text-align: center;
+  padding: 48px 32px; position: relative; overflow: hidden;
+}
+.intro::before {
+  content: ''; position: absolute; top: -30%; left: -10%; width: 120%; height: 120%;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(74,123,212,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.05) 0%, transparent 40%);
+  animation: breathe 10s ease-in-out infinite; pointer-events: none;
+}
+@keyframes breathe { 0%,100% { opacity: .6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); } }
+
+.intro-icon {
+  font-size: 64px; margin-bottom: 20px; position: relative; z-index: 1;
+  animation: float 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(74,123,212,0.3));
+}
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+.intro h1 {
+  font-family: var(--serif); font-size: 38px; font-weight: 300;
+  color: var(--white); letter-spacing: 2px; line-height: 1.2;
+  margin-bottom: 6px; position: relative; z-index: 1;
+}
+.intro h1 span { color: var(--gold); }
+
+.intro .tagline {
+  font-family: var(--sans); font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--blue-pale);
+  margin-bottom: 28px; position: relative; z-index: 1;
+}
+
+.intro .desc {
+  font-family: var(--serif); font-size: 18px; font-weight: 300;
+  line-height: 1.8; color: var(--white-dim); max-width: 340px;
+  margin-bottom: 32px; position: relative; z-index: 1;
+  text-align: center;
+}
+
+.intro .science-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--blue-pale); background: var(--blue-glow);
+  border: 1px solid rgba(74,123,212,0.12); border-radius: 2px;
+  padding: 10px 18px; margin-bottom: 36px; position: relative; z-index: 1;
+}
+
+/* ═══ SCREEN 2: RITUAL ═══ */
+.ritual { padding: 24px; padding-top: 60px; }
+
+.ritual-header { text-align: center; margin-bottom: 24px; }
+.ritual-header h2 {
+  font-family: var(--serif); font-size: 28px; font-weight: 300;
+  color: var(--white); letter-spacing: 2px; margin-bottom: 6px;
+}
+.ritual-header p {
+  font-size: 13px; color: var(--text-mid); line-height: 1.7;
+  max-width: 320px; margin: 0 auto;
+}
+
+.ritual-progress { display: flex; gap: 4px; margin-bottom: 28px; }
+.ritual-dot { flex: 1; height: 2px; border-radius: 1px; background: var(--border-light); transition: all 0.5s; }
+.ritual-dot.done { background: var(--gold); }
+.ritual-dot.current { background: var(--blue); box-shadow: 0 0 8px rgba(74,123,212,0.4); }
+
+.question-container { min-height: 360px; }
+
+.q-label {
+  font-family: var(--serif); font-size: 24px; font-weight: 400;
+  color: var(--white); line-height: 1.4; margin-bottom: 6px;
+  text-align: left;
+}
+.q-sublabel {
+  font-size: 12px; color: var(--text-dim); margin-bottom: 22px;
+  line-height: 1.6; text-align: left;
+}
+
+.q-options { display: flex; flex-direction: column; gap: 8px; }
+
+.q-option {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 2px; padding: 16px 18px; cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--sans); font-size: 14px; color: var(--text);
+}
+.q-option:hover { border-color: rgba(74,123,212,0.2); background: var(--card-hover); }
+.q-option.selected { border-color: var(--gold); background: var(--gold-glow); color: var(--white); }
+.q-option .q-emoji { font-size: 18px; flex-shrink: 0; }
+.q-option .q-text { flex: 1; line-height: 1.4; }
+.q-option .q-check {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1.5px solid var(--border-light); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s; font-size: 10px;
+}
+.q-option.selected .q-check { border-color: var(--gold); background: var(--gold); color: var(--bg); }
+
+.q-option-other-input {
+  flex: 1; background: transparent; border: none;
+  border-bottom: 1px solid var(--text-dim);
+  color: var(--white); font-family: var(--sans); font-size: 14px;
+  padding: 2px 0; outline: none; min-width: 0;
+}
+.q-option-other-input::placeholder { color: var(--text-dim); font-style: italic; }
+.q-option.selected .q-option-other-input { border-bottom-color: var(--gold); }
+
+.q-textarea {
+  width: 100%; min-height: 120px; background: var(--card);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 18px; font-family: var(--serif); font-size: 17px;
+  color: var(--white); resize: none; outline: none; line-height: 1.8;
+  transition: border-color 0.3s;
+}
+.q-textarea::placeholder { color: var(--text-dim); font-style: italic; }
+.q-textarea:focus { border-color: var(--blue); }
+
+.q-input-date {
+  width: 100%; background: var(--card); border: 1px solid var(--border);
+  border-radius: 2px; padding: 16px 18px;
+  font-family: var(--sans); font-size: 15px; color: var(--white);
+  outline: none; transition: border-color 0.3s;
+  -webkit-appearance: none; color-scheme: dark;
+}
+.q-input-date:focus { border-color: var(--blue); }
+
+.ritual-nav { display: flex; gap: 10px; margin-top: 28px; }
+.ritual-nav button { flex: 1; }
+.skip-note { text-align: center; margin-top: 10px; font-size: 11px; color: var(--text-dim); letter-spacing: 0.3px; }
+
+/* ═══ SCREEN 3: CAPTURE ═══ */
+.capture { padding: 24px; padding-top: 60px; }
+.capture-header { text-align: center; margin-bottom: 20px; }
+.capture-header h2 { font-family: var(--serif); font-size: 28px; font-weight: 300; color: var(--white); letter-spacing: 1px; margin-bottom: 8px; }
+.capture-header p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+
+.camera-area {
+  position: relative; width: 100%; aspect-ratio: 3/4;
+  background: var(--card); border-radius: 2px; overflow: hidden;
+  border: 1px solid var(--border); margin-bottom: 16px;
+}
+.camera-area::before {
+  content: ''; position: absolute; inset: 6px;
+  border: 1px solid var(--gold-line); border-radius: 1px;
+  pointer-events: none; z-index: 2;
+}
+.camera-area video, .camera-area img { width: 100%; height: 100%; object-fit: cover; }
+
+.upload-area {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; cursor: pointer;
+  transition: all 0.3s;
+}
+.upload-area:hover { background: var(--blue-glow); }
+.upload-area .upload-icon { font-size: 42px; margin-bottom: 12px; opacity: 0.4; }
+.upload-area .upload-text { font-size: 13px; color: var(--text-mid); letter-spacing: 0.3px; }
+.upload-area .upload-hint { font-size: 10px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.5px; }
+
+.preview-container { position: relative; width: 100%; height: 100%; }
+.preview-container img { width: 100%; height: 100%; object-fit: cover; }
+.btn-retake {
+  position: absolute; top: 14px; right: 14px;
+  background: rgba(7,10,18,0.8); color: var(--white);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 8px 14px; font-size: 11px; font-family: var(--sans);
+  cursor: pointer; backdrop-filter: blur(10px); z-index: 3;
+}
+
+.camera-tips { display: flex; gap: 8px; margin-bottom: 16px; }
+.camera-tip {
+  flex: 1; background: var(--card); border-radius: 2px;
+  padding: 12px 6px; text-align: center;
+  border: 1px solid var(--border);
+}
+.camera-tip .tip-icon { font-size: 16px; margin-bottom: 3px; }
+.camera-tip .tip-text { font-size: 9px; color: var(--text-dim); line-height: 1.3; letter-spacing: 0.3px; }
+
+#fileInput { display: none; }
+
+/* ═══ SCREEN 4: PROCESSING ═══ */
+.processing { justify-content: center; align-items: center; text-align: center; padding: 48px 32px; }
+
+.processing-orb {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,123,212,0.15) 0%, transparent 70%);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px; position: relative;
+  animation: pulse-orb 3s ease-in-out infinite;
+}
+@keyframes pulse-orb { 0%,100% { transform: scale(1); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+.processing-orb::before {
+  content: ''; position: absolute; inset: -16px;
+  border-radius: 50%; border: 1px solid rgba(74,123,212,0.12);
+  animation: spin-ring 8s linear infinite;
+}
+.processing-orb::after {
+  content: ''; position: absolute; inset: -32px;
+  border-radius: 50%; border: 1px solid var(--gold-line);
+  animation: spin-ring 12s linear infinite reverse;
+}
+@keyframes spin-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.processing-orb span { font-size: 48px; }
+
+.processing h2 { font-family: var(--serif); font-size: 22px; font-weight: 300; color: var(--white); letter-spacing: 1px; margin-bottom: 16px; }
+.processing .fact {
+  font-family: var(--serif); font-size: 15px; font-weight: 300;
+  font-style: italic; color: var(--white-dim); max-width: 300px;
+  line-height: 1.7; margin-bottom: 28px; min-height: 72px;
+  transition: opacity 0.4s;
+}
+.progress-bar { width: 180px; height: 2px; background: var(--border-light); border-radius: 1px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--gold)); border-radius: 1px; transition: width 0.3s ease; }
+
+/* ═══ SCREEN 5: RESULTS ═══ */
+.results { padding: 0 0 48px; }
+
+.results-hero {
+  text-align: center; padding: 36px 28px 28px;
+  background: linear-gradient(180deg, rgba(74,123,212,0.06) 0%, transparent 100%);
+  position: relative;
+}
+.results-hero::after {
+  content: '✦ · ✦ · ✦'; display: block; margin-top: 16px;
+  font-size: 8px; letter-spacing: 6px; color: var(--gold); opacity: 0.3;
+}
+.results-hero .archetype-label {
+  font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--blue-pale); margin-bottom: 8px;
+}
+.results-hero h2 {
+  font-family: var(--serif); font-size: 34px; font-weight: 300;
+  color: var(--white); letter-spacing: 1px; margin-bottom: 4px;
+}
+.results-hero .element-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--gold); font-family: var(--serif);
+  font-style: italic;
+}
+
+.soul-summary {
+  margin: 0 24px 20px; padding: 28px; position: relative;
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 2px solid var(--gold);
+}
+.soul-summary::before {
+  content: '❝'; position: absolute; top: 12px; left: 14px;
+  font-size: 28px; color: var(--gold); opacity: 0.2;
+  font-family: var(--serif);
+}
+.soul-summary p {
+  font-family: var(--serif); font-size: 17px; font-weight: 300;
+  font-style: italic; line-height: 1.9; color: var(--white-dim);
+  text-align: justify; text-align-last: left;
+}
+
+.section-nav {
+  display: flex; gap: 0; padding: 0 24px; margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-pill {
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text-dim); background: transparent; border: none;
+  border-bottom: 2px solid transparent;
+  padding: 12px 16px; cursor: pointer; white-space: nowrap;
+  transition: all 0.3s;
+}
+.nav-pill:hover { color: var(--text-mid); }
+.nav-pill.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.results-content { padding: 0 24px; }
+
+/* ═══ LINE CARDS ═══ */
+.line-card {
+  background: var(--card); padding: 22px;
+  margin-bottom: 10px; border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.3s; position: relative;
+}
+.line-card:hover { border-color: rgba(74,123,212,0.15); background: var(--card-hover); }
+.line-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.line-name { font-family: var(--serif); font-size: 20px; font-weight: 500; }
+.line-intensity {
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 4px 10px;
+}
+.intensity-fuerte { color: var(--gold); background: var(--gold-dim); }
+.intensity-media { color: var(--blue-pale); background: var(--blue-dim); }
+.intensity-suave { color: var(--teal); background: var(--teal-dim); }
+.line-short { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+.line-full {
+  font-family: var(--serif); font-size: 16px; font-weight: 300;
+  line-height: 1.9; color: var(--white-dim); padding-top: 14px;
+  margin-top: 12px; border-top: 1px solid var(--border);
+  display: none; text-align: justify; text-align-last: left;
+}
+.line-card.expanded .line-full { display: block; }
+.expand-hint { font-size: 10px; color: var(--text-dim); margin-top: 8px; letter-spacing: 0.5px; }
+.line-card.expanded .expand-hint { display: none; }
+.line-keywords { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.keyword {
+  font-size: 9px; letter-spacing: 0.5px; color: var(--text-dim);
+  background: rgba(255,255,255,0.03); padding: 4px 10px;
+  border: 1px solid var(--border-light);
+}
+
+/* ═══ MONTE CARDS ═══ */
+.monte-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.monte-card {
+  background: var(--card); padding: 16px; border: 1px solid var(--border);
+  cursor: pointer; transition: all 0.3s;
+}
+.monte-card:hover { border-color: rgba(74,123,212,0.15); }
+.monte-card.expanded { grid-column: 1 / -1; }
+.monte-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.monte-name { font-family: var(--serif); font-size: 16px; font-weight: 500; }
+.monte-dev { font-size: 8px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 3px 7px; }
+.dev-prominente { color: var(--gold); background: var(--gold-dim); }
+.dev-moderado { color: var(--blue-pale); background: var(--blue-dim); }
+.dev-plano { color: var(--text-dim); background: rgba(255,255,255,0.03); }
+.monte-reading {
+  font-size: 13px; color: var(--text-mid); line-height: 1.7;
+  display: none; margin-top: 8px;
+  text-align: justify; text-align-last: left;
+}
+.monte-card.expanded .monte-reading { display: block; }
+
+/* ═══ EXTRAS ═══ */
+.extras-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.extra-card {
+  flex: 1; background: var(--card); padding: 20px 14px;
+  text-align: center; border: 1px solid var(--border);
+  position: relative;
+}
+.extra-card::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 1px; background: var(--gold); opacity: 0.3;
+}
+.extra-emoji { font-size: 24px; margin-bottom: 8px; }
+.extra-label { font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.extra-value { font-family: var(--serif); font-size: 18px; color: var(--white); font-weight: 500; }
+.extra-note { font-size: 11px; color: var(--text-mid); margin-top: 6px; line-height: 1.5; }
+
+/* ═══ CTA ═══ */
+.cta-section {
+  margin-top: 28px; padding: 28px; text-align: center;
+  border: 1px solid var(--border); position: relative;
+  background: linear-gradient(135deg, var(--gold-glow), var(--blue-glow));
+}
+.cta-section::before, .cta-section::after {
+  content: '✦'; position: absolute; color: var(--gold); font-size: 8px; opacity: 0.3;
+}
+.cta-section::before { top: 10px; left: 14px; }
+.cta-section::after { bottom: 10px; right: 14px; }
+.cta-section h3 {
+  font-family: var(--serif); font-size: 24px; font-weight: 300;
+  color: var(--white); letter-spacing: 1px; margin-bottom: 8px;
+}
+.cta-section p { font-size: 13px; color: var(--text-mid); margin-bottom: 20px; line-height: 1.6; }
+.cta-buttons { display: flex; gap: 8px; flex-direction: column; }
+
+.price-card {
+  padding: 18px; background: var(--card); border: 1px solid var(--border);
+  text-align: left; transition: border-color 0.3s;
+}
+.price-card:hover { border-color: rgba(201,168,76,0.2); }
+.price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.price-name { font-size: 14px; color: var(--white); font-weight: 500; }
+.price-tag { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--gold); }
+.price-desc { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
+.price-unique { border-color: rgba(74,123,212,0.25); background: linear-gradient(135deg, var(--card), rgba(42,74,138,0.08)); }
+
+.disclaimer {
+  margin: 28px 24px 0; padding: 18px; border-top: 1px solid var(--border);
+  text-align: center;
+}
+.disclaimer p { font-size: 10px; color: var(--text-dim); line-height: 1.7; letter-spacing: 0.2px; }
+
+/* ═══ ANIMATIONS ═══ */
+.fade-in { animation: fadeIn 0.7s ease forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.stagger-1 { animation-delay: 0.1s; opacity: 0; }
+.stagger-2 { animation-delay: 0.2s; opacity: 0; }
+.stagger-3 { animation-delay: 0.3s; opacity: 0; }
+.stagger-4 { animation-delay: 0.4s; opacity: 0; }
+.stagger-5 { animation-delay: 0.5s; opacity: 0; }
+
+@media (max-width: 380px) {
+  .intro h1 { font-size: 32px; }
+  .monte-grid { grid-template-columns: 1fr; }
+  .q-label { font-size: 20px; }
+  .results-hero h2 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ═══ SCREEN 1: INTRO ═══ -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro">
+      <div class="intro-icon">✋</div>
+      <div class="tagline">Quirología · Selene Aura</div>
+      <h1>Tu mano guarda<br><span>secretos sobre ti</span></h1>
+      <div class="ornament"><span>✦</span></div>
+      <p class="desc">Cada línea, cada monte, cada proporción de tu palma cuenta una historia sobre tu vida, tu amor y tu destino.</p>
+      <div class="science-badge">✦ Basado en dermatoglifos · Tradición quirológica desde el s. IV a.C.</div>
+      <button class="btn-primary" onclick="goTo('ritual')" style="width:auto; padding-left:48px; padding-right:48px;">Comenzar mi lectura</button>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 2: RITUAL ═══ -->
+  <div class="screen" id="screen-ritual">
+    <button class="back-btn" onclick="goBack()">← Volver</button>
+    <div class="ritual">
+      <div class="ritual-header">
+        <h2>Sintonización</h2>
+        <div class="ornament-sm">✦ · ✦ · ✦</div>
+        <p>Para que tu lectura sea precisa, Selene necesita sintonizar con tu energía.</p>
+      </div>
+      <div class="ritual-progress" id="ritualProgress"></div>
+      <div class="question-container" id="questionContainer"></div>
+      <div class="ritual-nav" id="ritualNav"></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 3: CAPTURE ═══ -->
+  <div class="screen" id="screen-capture">
+    <button class="back-btn" onclick="goTo('ritual'); currentQ = QUESTIONS.length - 1; renderQuestion();">← Volver</button>
+    <div class="capture">
+      <div class="capture-header">
+        <h2>Muéstrame tu palma</h2>
+        <div class="ornament-sm">✦</div>
+        <p>Abre tu mano dominante con buena iluminación. Sin anillos ni pulseras.</p>
+      </div>
+      <div class="camera-area" id="cameraArea">
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Toca para subir una foto de tu palma</div>
+          <div class="upload-hint">JPG o PNG · Palma abierta · Buena iluminación</div>
+        </div>
+        <div class="preview-container" id="previewContainer" style="display:none">
+          <img id="previewImg" src="" alt="Tu palma">
+          <button class="btn-retake" onclick="resetCapture()">✕ Otra foto</button>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+      <div class="camera-tips">
+        <div class="camera-tip"><div class="tip-icon">☀️</div><div class="tip-text">Buena luz</div></div>
+        <div class="camera-tip"><div class="tip-icon">🖐️</div><div class="tip-text">Palma abierta</div></div>
+        <div class="camera-tip"><div class="tip-icon">📐</div><div class="tip-text">Foto nítida</div></div>
+        <div class="camera-tip"><div class="tip-icon">💍</div><div class="tip-text">Sin anillos</div></div>
+      </div>
+      <button class="btn-primary" id="btnAnalyze" onclick="startAnalysis()" style="display:none">Comenzar análisis quirológico</button>
+      <div style="text-align:center; margin-top:14px;">
+        <button class="btn-ghost" onclick="useDemoData()">Ver demo sin foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 4: PROCESSING ═══ -->
+  <div class="screen" id="screen-processing">
+    <div class="processing">
+      <div class="processing-orb"><span>🔮</span></div>
+      <h2>Selene estudia tu mano…</h2>
+      <p class="fact" id="processingFact"></p>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCREEN 5: RESULTS ═══ -->
+  <div class="screen" id="screen-results">
+    <div class="results" id="resultsContainer"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentQ = 0;
+let answers = {};
+let selectedImage = null;
+let activeIntervals = []; // BUG FIX: track all intervals for cleanup
+
+// ═══════════════════════════════════════
+// QUESTIONS
+// ═══════════════════════════════════════
+const QUESTIONS = [
+  {
+    id: 'birthdate',
+    label: '¿Cuándo naciste?',
+    sublabel: 'Tu fecha de nacimiento conecta tu energía natal con las líneas de tu mano.',
+    type: 'date'
+  },
+  {
+    id: 'focus',
+    label: '¿Qué área de tu vida necesita más claridad?',
+    sublabel: 'Selene enfocará la lectura en lo que más te importa ahora.',
+    type: 'select',
+    options: [
+      { emoji: '❤️', text: 'Amor y relaciones' },
+      { emoji: '🚀', text: 'Trabajo y propósito profesional' },
+      { emoji: '🌱', text: 'Crecimiento personal' },
+      { emoji: '⚡', text: 'Salud, energía y bienestar' },
+    ],
+    hasOther: true, otherPlaceholder: 'Escribe tu área…'
+  },
+  {
+    id: 'moment',
+    label: '¿Cómo describirías tu momento vital?',
+    sublabel: 'Las líneas de tu mano reflejan los ciclos que estás atravesando.',
+    type: 'select',
+    options: [
+      { emoji: '🌊', text: 'En pleno cambio o transición' },
+      { emoji: '🔍', text: 'Buscando dirección o propósito' },
+      { emoji: '⚖️', text: 'Estable pero con ganas de más' },
+      { emoji: '🔥', text: 'Empezando algo nuevo' },
+    ],
+    hasOther: true, otherPlaceholder: 'Describe tu momento…'
+  },
+  {
+    id: 'identity',
+    label: '¿Cómo te definirías?',
+    sublabel: 'Tu forma de percibir el mundo influye en cómo se manifiestan tus líneas.',
+    type: 'select',
+    options: [
+      { emoji: '🧠', text: 'Más racional y analítica' },
+      { emoji: '🔮', text: 'Más intuitiva y emocional' },
+      { emoji: '🌀', text: 'Depende del día — soy ambas' },
+    ],
+    hasOther: true, otherPlaceholder: 'Descríbete a tu manera…'
+  },
+  {
+    id: 'love',
+    label: '¿Cómo es tu situación sentimental?',
+    sublabel: 'Tu línea del corazón habla de cómo amas — el contexto la enriquece.',
+    type: 'select',
+    options: [
+      { emoji: '💕', text: 'En pareja, bien' },
+      { emoji: '💔', text: 'En pareja, pero con dudas' },
+      { emoji: '🦋', text: 'Soltera y abierta' },
+      { emoji: '🛡️', text: 'Soltera por elección' },
+    ],
+    hasOther: true, otherPlaceholder: 'Cuéntanos tu situación…'
+  },
+  {
+    id: 'question',
+    label: '¿Hay algo que quieras preguntarle a tu mano?',
+    sublabel: 'Escribe libremente. Selene integrará tu pregunta en la lectura.',
+    type: 'textarea',
+    placeholder: 'Ej: ¿Estoy en el camino correcto? ¿Debería arriesgar?',
+    optional: true
+  }
+];
+
+// ═══════════════════════════════════════
+// HELPERS — BUG FIX: safe HTML escaping
+// ═══════════════════════════════════════
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function clearAllIntervals() {
+  activeIntervals.forEach(id => clearInterval(id));
+  activeIntervals = [];
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  window.scrollTo(0, 0);
+  if (screen === 'ritual') renderQuestion();
+}
+
+function goBack() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+  else { goTo('intro'); }
+}
+
+// ═══════════════════════════════════════
+// RENDER QUESTIONS
+// ═══════════════════════════════════════
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+
+  const prog = document.getElementById('ritualProgress');
+  prog.innerHTML = QUESTIONS.map((_, i) =>
+    `<div class="ritual-dot ${i < currentQ ? 'done' : ''} ${i === currentQ ? 'current' : ''}"></div>`
+  ).join('');
+
+  const container = document.getElementById('questionContainer');
+  let html = `<div class="fade-in">
+    <div class="q-label">${q.label}</div>
+    <div class="q-sublabel">${q.sublabel}</div>`;
+
+  if (q.type === 'date') {
+    html += `<input type="date" class="q-input-date" id="qDate" value="${esc(answers[q.id] || '')}" 
+      onchange="answers['${q.id}'] = this.value; renderNav();">`;
+  } else if (q.type === 'select') {
+    html += `<div class="q-options">`;
+    q.options.forEach((opt) => {
+      const isSelected = answers[q.id] === opt.text;
+      html += `<div class="q-option ${isSelected ? 'selected' : ''}" data-value="${esc(opt.text)}" onclick="handleSelect(this, '${q.id}')">
+        <span class="q-emoji">${opt.emoji}</span>
+        <span class="q-text">${esc(opt.text)}</span>
+        <span class="q-check">${isSelected ? '✓' : ''}</span>
+      </div>`;
+    });
+    if (q.hasOther) {
+      const isOther = answers[q.id] && !q.options.some(o => o.text === answers[q.id]);
+      const otherVal = isOther ? answers[q.id] : '';
+      html += `<div class="q-option ${isOther ? 'selected' : ''}" data-value="__other__" onclick="handleOther(this, '${q.id}', '${esc(q.otherPlaceholder || '')}')">
+        <span class="q-emoji">✏️</span>
+        <span class="q-text" id="otherSpan_${q.id}">${isOther 
+          ? `<input class="q-option-other-input" type="text" value="${esc(otherVal)}" placeholder="${esc(q.otherPlaceholder)}" onclick="event.stopPropagation()" oninput="answers['${q.id}'] = this.value; renderNav();">` 
+          : 'Otro…'}</span>
+        <span class="q-check">${isOther ? '✓' : ''}</span>
+      </div>`;
+    }
+    html += `</div>`;
+  } else if (q.type === 'textarea') {
+    html += `<textarea class="q-textarea" id="qText" placeholder="${esc(q.placeholder || '')}" 
+      oninput="answers['${q.id}'] = this.value; renderNav();">${esc(answers[q.id] || '')}</textarea>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+  renderNav();
+}
+
+// BUG FIX: separate handlers for regular select and "Otro"
+function handleSelect(el, qId) {
+  const value = el.dataset.value;
+  answers[qId] = value;
+  el.parentElement.querySelectorAll('.q-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.q-check').textContent = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.q-check').textContent = '✓';
+  renderNav();
+  setTimeout(() => { if (currentQ < QUESTIONS.length - 1) { currentQ++; renderQuestion(); } }, 350);
+}
+
+function handleOther(el, qId, placeholder) {
+  el.parentElement.querySelectorAll('.q-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.q-check').textContent = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.q-check').textContent = '✓';
+
+  const span = document.getElementById('otherSpan_' + qId);
+  const prev = answers[qId] || '';
+  const isPreset = QUESTIONS.find(q=>q.id===qId)?.options?.some(o=>o.text===prev);
+  span.innerHTML = `<input class="q-option-other-input" type="text" value="${esc(isPreset ? '' : prev)}" 
+    placeholder="${esc(placeholder)}" onclick="event.stopPropagation()" 
+    oninput="answers['${qId}'] = this.value; renderNav();">`;
+  const input = span.querySelector('input');
+  input.focus();
+  answers[qId] = input.value || '';
+  renderNav();
+}
+
+function renderNav() {
+  const q = QUESTIONS[currentQ];
+  const nav = document.getElementById('ritualNav');
+  const isLast = currentQ === QUESTIONS.length - 1;
+  const isFirst = currentQ === 0;
+  const hasAnswer = !!answers[q.id];
+
+  let h = '';
+  if (!isFirst) h += `<button class="btn-secondary" onclick="currentQ--; renderQuestion();">← Anterior</button>`;
+  if (isLast) {
+    h += `<button class="btn-primary" onclick="finishRitual()">Analizar mi mano →</button>`;
+  } else if (hasAnswer || q.optional) {
+    h += `<button class="btn-primary" onclick="currentQ++; renderQuestion();">Siguiente →</button>`;
+  } else {
+    h += `<button class="btn-primary" disabled>Selecciona una opción</button>`;
+  }
+  nav.innerHTML = h;
+  if (q.optional && !hasAnswer) nav.innerHTML += `<div class="skip-note">Puedes dejarlo en blanco</div>`;
+}
+
+function finishRitual() { goTo('capture'); }
+
+// ═══════════════════════════════════════
+// PHOTO
+// ═══════════════════════════════════════
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    selectedImage = ev.target.result;
+    document.getElementById('uploadArea').style.display = 'none';
+    document.getElementById('previewContainer').style.display = 'block';
+    document.getElementById('previewImg').src = selectedImage;
+    document.getElementById('btnAnalyze').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetCapture() {
+  selectedImage = null;
+  document.getElementById('uploadArea').style.display = 'flex';
+  document.getElementById('previewContainer').style.display = 'none';
+  document.getElementById('btnAnalyze').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+}
+
+// ═══════════════════════════════════════
+// PROCESSING
+// ═══════════════════════════════════════
+const FACTS = [
+  "Las líneas de tu mano se forman entre las semanas 10-16 de gestación, antes que tus huellas dactilares.",
+  "La dermatoglífica cuenta con más de 6.000 publicaciones científicas peer-reviewed.",
+  "Cada palma humana es única — ni los gemelos idénticos comparten el mismo patrón.",
+  "Los montes de la mano llevan nombres de planetas del sistema solar desde la antigüedad.",
+  "Aristóteles documentó la quiromancia en el 350 a.C., en su Historia Animalium.",
+  "Las líneas palmares evolucionan lentamente a lo largo de la vida.",
+  "Cheiro leyó las manos de Mark Twain, Oscar Wilde y la reina Victoria.",
+  "Tu mano dominante revela quién eres hoy; la otra, tu potencial innato."
+];
+
+function runProcessing(apiPromise) {
+  goTo('processing');
+  clearAllIntervals();
+  let factIdx = 0;
+  const factEl = document.getElementById('processingFact');
+  const fillEl = document.getElementById('progressFill');
+  factEl.textContent = FACTS[0]; factEl.style.opacity = 1; fillEl.style.width = '0%';
+
+  const fi = setInterval(() => {
+    factIdx = (factIdx + 1) % FACTS.length;
+    factEl.style.opacity = 0;
+    setTimeout(() => { factEl.textContent = FACTS[factIdx]; factEl.style.opacity = 1; }, 300);
+  }, 3500);
+  activeIntervals.push(fi);
+
+  let progress = 0;
+  const pi = setInterval(() => {
+    progress += Math.random() * 8 + 2;
+    if (progress > 92) progress = 92;
+    fillEl.style.width = progress + '%';
+  }, 500);
+  activeIntervals.push(pi);
+
+  apiPromise
+    .then(data => { clearAllIntervals(); fillEl.style.width = '100%'; setTimeout(() => renderResults(data), 500); })
+    .catch(() => { clearAllIntervals(); fillEl.style.width = '100%'; setTimeout(() => renderResults(getDemoData()), 500); });
+}
+
+function startAnalysis() { runProcessing(callClaudeVision(selectedImage, answers)); }
+
+function useDemoData() {
+  runProcessing(new Promise(resolve => setTimeout(() => resolve(getDemoData()), 2500)));
+}
+
+// ═══════════════════════════════════════
+// CLAUDE VISION API
+// ═══════════════════════════════════════
+function buildContext(ans) {
+  let c = [];
+  if (ans.birthdate) {
+    const d = new Date(ans.birthdate);
+    const signs = [[120,'Capricornio'],[219,'Acuario'],[320,'Piscis'],[420,'Aries'],[521,'Tauro'],[621,'Géminis'],[722,'Cáncer'],[823,'Leo'],[923,'Virgo'],[1023,'Libra'],[1122,'Escorpio'],[1222,'Sagitario'],[1231,'Capricornio']];
+    const md = (d.getMonth()+1)*100 + d.getDate();
+    const sign = signs.find(s => md <= s[0])?.[1] || 'Capricornio';
+    c.push(`Signo solar: ${sign}. Edad aprox: ${new Date().getFullYear()-d.getFullYear()}.`);
+  }
+  if (ans.focus) c.push(`Área de preocupación: ${ans.focus}.`);
+  if (ans.moment) c.push(`Momento vital: ${ans.moment}.`);
+  if (ans.identity) c.push(`Se define como: ${ans.identity}.`);
+  if (ans.love) c.push(`Situación sentimental: ${ans.love}.`);
+  if (ans.question) c.push(`Pregunta personal: "${ans.question}"`);
+  return c.join(' ');
+}
+
+async function callClaudeVision(imgUrl, ans) {
+  const base64 = imgUrl.split(',')[1];
+  const mt = imgUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+  const ctx = buildContext(ans);
+  const sys = `Eres Selene, quiróloga experta (Cheiro, Benham, Goldberg). Quirología moderna + dermatoglifos.\nIDENTIDAD: Cálida, sabia, poética, precisa. Español. Tuteas. NUNCA menciones IA/AI/algoritmo/machine learning.\nCONTEXTO (integra NATURALMENTE como si la mano lo revelara — NUNCA digas que te lo han dicho):\n${ctx}\nREGLAS: Si amor→corazón+Venus protagonistas. Si trabajo→destino+Júpiter/Mercurio. Si transición→bifurcaciones=confirmación. Si intuitiva→Luna+cabeza curva. Si racional→cabeza recta+Mercurio. Si pregunta→resumen_alma la responde. Rainbow ruse: "Proyectas X pero dentro hay Y".\nANALIZA: Forma(Fuego/Tierra/Aire/Agua), Líneas(Vida,Corazón,Cabeza,Destino,Sol,Salud), Montes(Venus,Júpiter,Saturno,Apolo,Mercurio,Luna,Marte), Marcas.\nRESPONDE SOLO JSON VÁLIDO sin backticks:\n{"forma_mano":{"tipo":"","descripcion":"2-3 frases","elemento_emoji":""},"lineas":[{"nombre":"","id":"vida|corazon|cabeza|destino|sol|salud","presente":true,"intensidad":"fuerte|media|suave","lectura_corta":"1 frase","lectura_completa":"5-7 frases personalizadas","keywords":["",""]}],"montes":[{"nombre":"","id":"","desarrollo":"prominente|moderado|plano","lectura":"2-3 frases"}],"marcas_especiales":[{"tipo":"","ubicacion":"","significado":""}],"resumen_alma":"6-8 frases integrando contexto","cristal_recomendado":{"nombre":"","razon":""},"frecuencia_hz":{"valor":432,"nombre":"","razon":""},"elemento_dominante":"","arquetipo":"El/La [único]","confianza_analisis":"alta|media|baja"}`;
+  const r = await fetch('/api/quirologia', {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-5-20250929', max_tokens:4000, system:sys,
+      messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:base64}},{type:'text',text:'Analiza esta palma. JSON quirológico completo.'}]}]
+    })
+  });
+  const d = await r.json();
+  return JSON.parse(d.content.map(x=>x.text||'').join('').replace(/```json|```/g,'').trim());
+}
+
+// ═══════════════════════════════════════
+// RENDER RESULTS
+// ═══════════════════════════════════════
+function renderResults(data) {
+  goTo('results');
+  const c = document.getElementById('resultsContainer');
+  const lc = { vida:'#7C6DB0', corazon:'#C9A84C', cabeza:'#4A7BD4', destino:'#C4687E', sol:'#E2CA7A', salud:'#5AB8A6' };
+
+  c.innerHTML = `
+    <div class="results-hero fade-in">
+      <div class="archetype-label">Tu arquetipo quirológico</div>
+      <h2>${esc(data.arquetipo)}</h2>
+      <div class="element-badge">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
+    </div>
+    <div class="soul-summary fade-in stagger-1"><p>${esc(data.resumen_alma)}</p></div>
+    <div class="section-nav fade-in stagger-2">
+      <button class="nav-pill active" onclick="showSection('lineas',this)">Líneas</button>
+      <button class="nav-pill" onclick="showSection('montes',this)">Montes</button>
+      <button class="nav-pill" onclick="showSection('forma',this)">Forma</button>
+      <button class="nav-pill" onclick="showSection('extras',this)">Extras</button>
+    </div>
+    <div class="results-content">
+      <div id="section-lineas">
+        ${data.lineas.map((l,i)=>`
+          <div class="line-card fade-in stagger-${Math.min(i+2,5)}" onclick="this.classList.toggle('expanded')" style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
+            <div class="line-card-header">
+              <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
+              <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
+            </div>
+            <div class="line-short">${esc(l.lectura_corta)}</div>
+            <div class="expand-hint">Toca para ver lectura completa ↓</div>
+            <div class="line-full">${esc(l.lectura_completa)}</div>
+            <div class="line-keywords">${(l.keywords||[]).map(k=>`<span class="keyword">${esc(k)}</span>`).join('')}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div id="section-montes" style="display:none">
+        <div class="monte-grid">
+          ${data.montes.map(m=>`
+            <div class="monte-card" onclick="this.classList.toggle('expanded')">
+              <div class="monte-header">
+                <span class="monte-name">${esc(m.nombre)}</span>
+                <span class="monte-dev dev-${m.desarrollo}">${m.desarrollo}</span>
+              </div>
+              <div class="monte-reading">${esc(m.lectura)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div id="section-forma" style="display:none">
+        <div class="line-card" style="border-left:2px solid var(--gold)">
+          <div class="line-name">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
+          <div class="line-full" style="display:block">${esc(data.forma_mano.descripcion)}</div>
+        </div>
+        ${data.marcas_especiales?.length?`
+          <div style="margin-top:14px">
+            <div class="ornament-sm">Marcas especiales</div>
+            ${data.marcas_especiales.map(m=>`
+              <div class="line-card" style="border-left:2px solid var(--blue)">
+                <div class="line-name" style="font-size:16px;color:var(--blue-pale)">${esc(m.tipo)}</div>
+                <div style="font-size:11px;color:var(--text-dim);margin:4px 0">${esc(m.ubicacion)}</div>
+                <div class="line-short">${esc(m.significado)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `:''}
+      </div>
+      <div id="section-extras" style="display:none">
+        <div class="extras-row">
+          <div class="extra-card"><div class="extra-emoji">💎</div><div class="extra-label">Tu cristal</div><div class="extra-value">${esc(data.cristal_recomendado.nombre)}</div><div class="extra-note">${esc(data.cristal_recomendado.razon)}</div></div>
+          <div class="extra-card"><div class="extra-emoji">🎵</div><div class="extra-label">Tu frecuencia</div><div class="extra-value">${data.frecuencia_hz.valor} Hz</div><div class="extra-note">${esc(data.frecuencia_hz.nombre)}</div></div>
+        </div>
+        <div class="extras-row">
+          <div class="extra-card" style="flex:1"><div class="extra-emoji">${data.forma_mano.elemento_emoji}</div><div class="extra-label">Elemento</div><div class="extra-value">${esc(data.elemento_dominante)}</div></div>
+        </div>
+      </div>
+      <div class="cta-section fade-in stagger-5">
+        <h3>Profundiza tu lectura</h3>
+        <div class="ornament-sm">✦</div>
+        <p>Has visto tu lectura express. Descubre todo lo que tu mano quiere contarte.</p>
+        <div class="cta-buttons">
+          <div class="price-card"><div class="price-row"><span class="price-name">Análisis Completo</span><span class="price-tag">1,49 €</span></div><div class="price-desc">6 líneas + 7 montes + forma + marcas. Lectura narrativa de ~800 palabras.</div></div>
+          <div class="price-card price-unique"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">2,49 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
+          <div class="price-card"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Mano izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
+          <div class="price-card"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">1,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
+          <button class="btn-primary" onclick="window.open('https://carta.selenaura.com','_blank')" style="margin-top:14px">Obtener mi Carta Astral</button>
+          <button class="btn-secondary" onclick="resetAll()">Analizar mi otra mano</button>
+        </div>
+      </div>
+      <div class="disclaimer"><p>La quirología es una tradición milenaria de autoconocimiento. No constituye asesoramiento médico, psicológico ni terapéutico. Basado en dermatoglifos y textos clásicos de Cheiro (1916) y Benham.</p></div>
+    </div>`;
+}
+
+function showSection(id, btn) {
+  ['lineas','montes','forma','extras'].forEach(s => {
+    const el = document.getElementById('section-'+s);
+    if (el) el.style.display = s===id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function resetAll() { selectedImage=null; currentQ=0; answers={}; resetCapture(); goTo('ritual'); }
+
+// ═══════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════
+function getDemoData() {
+  const f=answers.focus||'', m=answers.moment||'', id=answers.identity||'', lv=answers.love||'', q=answers.question||'';
+  const isL=f.includes('Amor'), isW=f.includes('Trabajo'), isCh=m.includes('cambio')||m.includes('transición'), isSe=m.includes('Buscando');
+  const isR=id.includes('racional'), isI=id.includes('intuitiva'), isSi=lv.includes('Soltera');
+
+  const heartS = isL&&lv.includes('dudas') ? 'Tu corazón ya sabe la respuesta — las dudas son la puerta, no el muro.'
+    : isL&&isSi ? 'Tu línea del corazón se prepara para algo grande — y lo sabe.'
+    : 'Amas con toda el alma — pero has aprendido a proteger tu corazón sin cerrarlo.';
+  const heartF = isL&&lv.includes('dudas') ? 'Tu línea del corazón se curva profundamente hacia Júpiter, señal de idealismo amoroso genuino. Pero hay cadenas en su recorrido reciente — no son heridas, son preguntas que tu corazón necesita formularse. Las dudas que sientes no son debilidad: son tu intuición señalándote algo que tu mente aún no quiere ver. La profundidad de esta línea promete que tu capacidad de amar es inmensa, pero tu mano te pide que esta vez elijas con los ojos abiertos.'
+    : isL&&isSi ? 'Tu línea del corazón es profunda pero se curva hacia dentro antes de alcanzar Júpiter. No has cerrado tu corazón, sino que lo estás preparando. Hay una madurez emocional que dice que lo próximo que permitas entrar será diferente a todo lo anterior. No llegas vacía al amor — llegas sabia. Y la ramificación ascendente al final sugiere que algo se gesta, aunque tú aún no lo veas.'
+    : 'Tu línea del corazón se curva con determinación hacia Júpiter. Amas con idealismo, con un sentido casi espiritual de lo que una relación debe ser. No te conformas con conexiones superficiales — necesitas profundidad y significado. Las pequeñas cadenas que aparecen no hablan de fracasos, sino de períodos donde tu corazón aprendió lecciones necesarias.';
+
+  const headS = isR ? 'Una mente brillante y estructurada — pero tu mano revela una intuición que no estás usando.'
+    : isI ? 'Tu mente vuela — la curvatura de esta línea confirma un mundo interior vasto y rico.'
+    : 'Una mente que danza entre la lógica y la imaginación — la bifurcación al final es la marca del creador.';
+  const headF = isR ? 'Tu línea de la cabeza es firme, recta y prolongada — la marca de una mente analítica rigurosa. Pero la línea desciende sutilmente hacia el monte de la Luna al final. Bajo toda esa estructura racional, hay una intuición poderosa que a veces ignoras. La bifurcación final — la marca del escritor — confirma tu capacidad dual: puedes habitar el mundo de los datos y el de la creación con la misma soltura.'
+    : isI ? 'Tu línea de la cabeza desciende en una curva elegante hacia el monte de la Luna. Firma de una mente profundamente intuitiva y creativa — piensas en imágenes, en sensaciones, en conexiones que otros no ven. Pero la firmeza del inicio muestra que hay una base lógica sólida bajo toda esa intuición. No eres solo emocional — procesas la realidad en más dimensiones que la mayoría.'
+    : 'Tu línea de la cabeza comienza firme pero se curva suavemente hacia la Luna. Revela una mente que no puede ni quiere elegir entre razón e imaginación. La bifurcación al final — la marca del escritor — confirma tu capacidad única de habitar dos mundos mentales.';
+
+  const destS = isCh||isSe ? 'El cambio que estás viviendo no es un accidente — tu mano lo confirma.'
+    : isW ? 'Tu propósito profesional está escrito aquí — y aún no has desplegado todo tu potencial.'
+    : 'Tu propósito no vino dado — lo estás construyendo tú misma, paso a paso.';
+  const destF = isCh||isSe ? 'Tu línea del destino muestra una interrupción clara y un nuevo trazo que emerge con fuerza. El cambio de dirección que atraviesas está literalmente escrito en tu mano. No es caos — es recalibración. La nueva línea emerge más profunda que la anterior: esta dirección te alinea más con tu propósito real.'
+    : isW ? 'Tu línea del destino asciende con determinación hacia Saturno. Vocación seria y profunda que no se conforma con lo mediocre. Las ramificaciones son oportunidades que tu mano anticipa. El reconocimiento vendrá, pero a tu ritmo.'
+    : 'Tu línea del destino emerge desde el centro de la palma. No naciste con un camino predeterminado. Tu vocación es algo que descubres y construyes activamente.';
+
+  let soul;
+  const elType = isI ? 'agua que piensa' : isR ? 'fuego que calcula' : 'tierra que sueña';
+  if (q) {
+    soul = `Eres ${elType}, que siente, que crea. Tu mano dibuja el retrato de alguien que transforma experiencia en sabiduría. ${isCh?'El momento de transición que vives no es destrucción — es metamorfosis.':'Hay una fuerza silenciosa en tu mano: aún no has visto todo lo que puedes ser.'} Y sobre lo que preguntas — tu mano responde con claridad: la profundidad de tu línea del destino, que se fortalece ahora, dice que sí. ${isL?'El amor que buscas existe, pero vendrá cuando dejes de buscarlo y empieces a ser lo que buscas.':'Confía en el proceso, aunque no veas el final. Tu mano sabe algo que tu mente aún no.'} Lo que tus líneas te piden es paciencia y confianza absoluta en lo que sientes.`;
+  } else {
+    soul = `Eres ${elType}, que siente, que crea. Tu mano dibuja el retrato de alguien que vino a transformar experiencia en sabiduría. Hay una dualidad preciosa en ti: la mente que estructura y la intuición que sabe sin explicar. ${isCh?'El cambio que atraviesas está escrito en cada bifurcación — no lo temas, es evolución.':''} Tu línea del corazón habla de un amor ${isSi?'que se prepara para llegar':'profundo e idealista'}; tu línea del destino, de un propósito que construyes con tus propias manos.`;
+  }
+
+  return {
+    forma_mano:{tipo:"Agua",descripcion:"Tu mano es larga y elegante, con dedos que se extienden como ramas buscando la luz. La palma rectangular y esos dedos estilizados revelan una naturaleza profundamente intuitiva — eres de quienes sienten antes de pensar, de quienes captan lo que otros no ven.",elemento_emoji:"💧"},
+    lineas:[
+      {nombre:"Línea de la Vida",id:"vida",presente:true,intensidad:"fuerte",lectura_corta:isCh?"Una vitalidad que se renueva — el giro que vives ya estaba escrito aquí.":"Una vitalidad profunda y resiliente — cada transformación te hizo más fuerte.",lectura_completa:isCh?"Tu línea de la vida es profunda y bien definida. Hay un punto de inflexión visible — un momento donde cambiaste de dirección. Este giro no es accidente: tu mano ya lo sabía. La bifurcación que nace es la versión de ti que estás empezando a explorar. Y lo revelador: la profundidad DESPUÉS del cambio es mayor — esta nueva dirección te da más fuerza.":"Tu línea de la vida es profunda y bien definida. Energía vital potente y capacidad notable de recuperación. No es la longitud lo que importa, sino la claridad: tienes una fuerza interior que no se apaga fácilmente. Las ramificaciones ascendentes hablan de períodos de crecimiento personal activo.",keywords:["vitalidad","transformación","resiliencia","renovación"]},
+      {nombre:"Línea del Corazón",id:"corazon",presente:true,intensidad:"fuerte",lectura_corta:heartS,lectura_completa:heartF,keywords:["idealismo","profundidad","entrega","sabiduría"]},
+      {nombre:"Línea de la Cabeza",id:"cabeza",presente:true,intensidad:"media",lectura_corta:headS,lectura_completa:headF,keywords:["creatividad","intuición","dualidad","imaginación"]},
+      {nombre:"Línea del Destino",id:"destino",presente:true,intensidad:"media",lectura_corta:destS,lectura_completa:destF,keywords:["propósito","autodescubrimiento","determinación"]},
+      {nombre:"Línea del Sol",id:"sol",presente:true,intensidad:"suave",lectura_corta:"Hay un brillo creativo latente que aún no has desplegado del todo.",lectura_completa:"Tu línea del Sol es sutil pero presente. Tu éxito no vendrá del estruendo sino de la autenticidad: cuando permitas que tu luz genuina se muestre sin filtros, el mundo responderá. No busques aplausos — busca expresión honesta.",keywords:["talento","autenticidad","expresión"]}
+    ],
+    montes:[
+      {nombre:"Venus",id:"venus",desarrollo:"prominente",lectura:"Monte generoso — sensualidad, amor por la vida y capacidad de entrega. Amas intensamente cuando decides abrir esa puerta."},
+      {nombre:"Júpiter",id:"jupiter",desarrollo:isW?"prominente":"moderado",lectura:isW?"Ambición genuina y liderazgo natural. Buscas impacto y significado.":"Ambición sana y espiritualidad genuina."},
+      {nombre:"Saturno",id:"saturno",desarrollo:"moderado",lectura:"Disciplina interior y sabiduría ganada a pulso."},
+      {nombre:"Apolo",id:"apolo",desarrollo:"prominente",lectura:"Confirma tu naturaleza creativa. Necesitas belleza y expresión artística."},
+      {nombre:"Mercurio",id:"mercurio",desarrollo:isR?"prominente":"moderado",lectura:isR?"Comunicación poderosa y mente analítica. Podrías persuadir a quien quisieras.":"Comunicación fluida. Podrías ser excelente consejera o escritora."},
+      {nombre:"Luna",id:"luna",desarrollo:isI?"prominente":"moderado",lectura:isI?"Tu subconsciente es tu mayor aliado. Los sueños, las corazonadas, las señales que otros ignoran: para ti son datos reales.":"Imaginación activa y cierta sensibilidad psíquica."},
+      {nombre:"Marte",id:"marte",desarrollo:"moderado",lectura:"Coraje para defender lo que amas. Tu fuerza es resiliente, no explosiva."}
+    ],
+    marcas_especiales:[{tipo:"Bifurcación",ubicacion:"Final de la línea de la cabeza",significado:"La marca del escritor — capacidad dual para pensamiento analítico y creativo."},{tipo:"Estrella",ubicacion:"Monte de Apolo",significado:"Talento creativo excepcional y potencial de reconocimiento."}],
+    resumen_alma:soul,
+    cristal_recomendado:{nombre:isI?"Labradorita":isR?"Citrino":"Amatista",razon:isI?"Potencia tu intuición y protege tu sensibilidad.":isR?"Equilibra tu mente analítica con apertura emocional.":"Conecta tu dualidad mente-corazón."},
+    frecuencia_hz:{valor:isL?528:isW?741:432,nombre:isL?"Frecuencia del Amor":isW?"Frecuencia de la Expresión":"Frecuencia Universal",razon:isL?"Resuena con tu línea del corazón.":isW?"Activa creatividad y comunicación.":"Armoniza cuerpo, mente y espíritu."},
+    elemento_dominante:"Agua",
+    arquetipo:isI?"La Visionaria Intuitiva":isR?"La Arquitecta del Destino":"La Tejedora de Mundos",
+    confianza_analisis:"alta"
+  };
+}
+</script>
+</body>
+</html>
