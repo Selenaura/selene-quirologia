@@ -310,7 +310,7 @@ body::before {
 #fileInput { display: none; }
 
 /* ═══ SCREEN 4: PROCESSING ═══ */
-.processing { justify-content: center; align-items: center; text-align: center; padding: 48px 32px; }
+.processing { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 48px 32px; min-height: 80dvh; }
 
 .processing-orb {
   width: 120px; height: 120px; border-radius: 50%;
@@ -579,6 +579,81 @@ body::before {
   text-align: center;
 }
 .disclaimer p { font-size: 10px; color: var(--text-dim); line-height: 1.7; letter-spacing: 0.2px; }
+
+/* ═══ LOCK/BLUR SYSTEM ═══ */
+.locked-zone {
+  position: relative; overflow: hidden; pointer-events: none;
+}
+.locked-zone > * { filter: blur(6px); user-select: none; }
+.locked-zone .lock-overlay {
+  filter: none; pointer-events: auto; position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, rgba(10,10,15,0) 0%, rgba(10,10,15,0.85) 40%, rgba(10,10,15,0.95) 100%);
+  padding: 20px;
+}
+.lock-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.9; }
+.lock-text {
+  font-family: var(--serif); font-size: 15px; color: var(--white-dim);
+  text-align: center; line-height: 1.6; max-width: 260px; margin-bottom: 14px;
+}
+.lock-cta {
+  pointer-events: auto; cursor: pointer; padding: 12px 28px;
+  background: linear-gradient(135deg, var(--gold), #D4AF37); color: var(--bg);
+  font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+  border: none; border-radius: 8px; transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+}
+.lock-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
+.lock-hint {
+  font-family: var(--sans); font-size: 10px; color: var(--text-dim);
+  margin-top: 8px; letter-spacing: 0.5px;
+}
+
+.line-card.preview-only .expand-hint,
+.line-card.preview-only .line-full,
+.line-card.preview-only .line-keywords { display: none !important; }
+.line-card.preview-only { pointer-events: none; }
+
+.soul-truncated {
+  position: relative; max-height: 72px; overflow: hidden;
+}
+.soul-truncated::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+  background: linear-gradient(transparent, var(--bg));
+}
+
+.floating-unlock {
+  position: sticky; bottom: 16px; z-index: 20; margin: 20px 16px 8px;
+  background: linear-gradient(135deg, rgba(10,10,15,0.95), rgba(20,20,30,0.98));
+  border: 1px solid rgba(201,168,76,0.25); border-radius: 14px;
+  padding: 16px 20px; text-align: center;
+  box-shadow: 0 -4px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+}
+.floating-unlock .fu-title {
+  font-family: var(--serif); font-size: 16px; color: var(--gold-light);
+  margin-bottom: 6px;
+}
+.floating-unlock .fu-sub {
+  font-family: var(--sans); font-size: 11px; color: var(--text-dim);
+  margin-bottom: 12px; line-height: 1.5;
+}
+.floating-unlock .fu-btn {
+  display: inline-block; cursor: pointer; padding: 12px 32px;
+  background: linear-gradient(135deg, var(--gold), #D4AF37); color: var(--bg);
+  font-family: var(--sans); font-size: 14px; font-weight: 700;
+  border: none; border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.3); transition: all 0.3s;
+}
+.floating-unlock .fu-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
+.floating-unlock .fu-price {
+  font-family: var(--serif); font-size: 22px; color: var(--gold); font-weight: 600;
+}
+
+.nav-pill.locked-pill { opacity: 0.4; position: relative; }
+.nav-pill.locked-pill::after {
+  content: '🔒'; font-size: 8px; position: absolute; top: -4px; right: -2px;
+}
 
 /* ═══ PALM MAP ═══ */
 .palm-map-container {
@@ -1087,8 +1162,9 @@ JSON VÁLIDO sin backticks:
 }
 
 
+
 // ═══════════════════════════════════════
-// PALM MAP SVG — Constellation diagram
+// PALM MAP — Abstract cartographic diagram
 // ═══════════════════════════════════════
 function buildPalmMap(data) {
   const lc = { vida:'#7C6DB0', corazon:'#C9A84C', cabeza:'#4A7BD4', destino:'#C4687E', sol:'#E2CA7A', salud:'#5AB8A6' };
@@ -1098,97 +1174,111 @@ function buildPalmMap(data) {
   const mountMap = {};
   (data.montes||[]).forEach(m => { mountMap[m.id] = m; });
 
-  let svg = `<svg class="palm-map-svg" viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
+  // Schematic layout on a 320x320 viewBox
+  // Central ellipse represents the palm, lines are positioned around it
+  const cx = 160, cy = 168;
+
+  let svg = `<svg class="palm-map-svg" viewBox="0 0 320 340" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="softglow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="sg"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="palmClip"><ellipse cx="${cx}" cy="${cy}" rx="120" ry="145"/></clipPath>
   </defs>
 
-  <!-- Sacred geometry bg -->
-  <circle cx="160" cy="230" r="160" fill="none" stroke="rgba(201,168,76,0.03)" stroke-width="0.5"/>
-  <circle cx="160" cy="230" r="110" fill="none" stroke="rgba(201,168,76,0.025)" stroke-width="0.5"/>
+  <!-- Outer decorative rings -->
+  <ellipse cx="${cx}" cy="${cy}" rx="150" ry="155" fill="none" stroke="rgba(201,168,76,0.04)" stroke-width="0.5"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="135" ry="150" fill="none" stroke="rgba(201,168,76,0.035)" stroke-width="0.5" stroke-dasharray="2,6"/>
 
-  <!-- HAND — clean iconic silhouette, open right palm -->
-  <path d="
-    M 100,380
-    C 85,360 74,330 72,295 C 70,265 74,235 82,210
-    C 86,198 90,188 94,180 L 96,170
-    C 90,155 84,130 82,112 C 80,94 84,80 92,76 C 100,72 108,78 112,92 C 116,106 115,125 114,145
-    L 114,152
-    C 118,132 124,100 130,76 C 136,52 142,36 150,32 C 158,28 164,34 166,48 C 168,62 166,86 162,114
-    L 160,134
-    C 165,110 172,78 180,56 C 188,34 196,22 204,22 C 212,22 216,34 216,52 C 216,70 212,98 206,126
-    L 204,140
-    C 210,120 218,96 226,80 C 234,64 242,58 248,62 C 254,66 256,78 252,96 C 248,114 240,135 234,150
-    L 234,155
-    C 242,152 250,152 256,158 C 262,164 262,174 258,186 C 254,198 246,210 238,218
-    C 248,245 252,280 248,312 C 244,342 234,365 218,380
-    C 202,395 180,402 160,402 C 140,402 118,395 106,386
-    Z"
-    fill="none" stroke="rgba(201,168,76,0.13)" stroke-width="0.8" stroke-linejoin="round"/>
-  `;
+  <!-- Main palm ellipse -->
+  <ellipse cx="${cx}" cy="${cy}" rx="120" ry="145" fill="rgba(201,168,76,0.02)" stroke="rgba(201,168,76,0.08)" stroke-width="0.8"/>
 
-  // Mount areas with planetary symbols
-  const mp = {
-    venus:    { cx: 102, cy: 290, r: 32, sym: '♀', col: '201,168,76' },
-    jupiter:  { cx: 124, cy: 145, r: 15, sym: '♃', col: '201,168,76' },
-    saturno:  { cx: 156, cy: 135, r: 14, sym: '♄', col: '240,237,228' },
-    apolo:    { cx: 192, cy: 138, r: 14, sym: '☉', col: '240,237,228' },
-    mercurio: { cx: 225, cy: 150, r: 13, sym: '☿', col: '240,237,228' },
-    luna:     { cx: 230, cy: 295, r: 28, sym: '☽', col: '74,123,212' },
-    marte:    { cx: 164, cy: 220, r: 20, sym: '♂', col: '196,104,126' }
+  <!-- Inner grid lines (subtle latitude/longitude) -->
+  <line x1="50" y1="${cy}" x2="270" y2="${cy}" stroke="rgba(201,168,76,0.03)" stroke-width="0.4" stroke-dasharray="3,8"/>
+  <line x1="${cx}" y1="30" x2="${cx}" y2="310" stroke="rgba(201,168,76,0.03)" stroke-width="0.4" stroke-dasharray="3,8"/>
+
+  <!-- Finger zone indicators (top of palm) -->
+  <line x1="80" y1="52" x2="80" y2="28" stroke="rgba(240,237,228,0.08)" stroke-width="0.5"/>
+  <text x="80" y="22" text-anchor="middle" fill="rgba(240,237,228,0.15)" font-size="7" font-family="'Outfit',sans-serif">Pulgar</text>
+
+  <line x1="120" y1="32" x2="120" y2="10" stroke="rgba(240,237,228,0.08)" stroke-width="0.5"/>
+  <text x="120" y="7" text-anchor="middle" fill="rgba(240,237,228,0.15)" font-size="7" font-family="'Outfit',sans-serif">Índice</text>
+
+  <line x1="160" y1="26" x2="160" y2="8" stroke="rgba(240,237,228,0.08)" stroke-width="0.5"/>
+  <text x="160" y="5" text-anchor="middle" fill="rgba(240,237,228,0.15)" font-size="7" font-family="'Outfit',sans-serif">Medio</text>
+
+  <line x1="200" y1="30" x2="200" y2="10" stroke="rgba(240,237,228,0.08)" stroke-width="0.5"/>
+  <text x="200" y="7" text-anchor="middle" fill="rgba(240,237,228,0.15)" font-size="7" font-family="'Outfit',sans-serif">Anular</text>
+
+  <line x1="236" y1="42" x2="236" y2="18" stroke="rgba(240,237,228,0.08)" stroke-width="0.5"/>
+  <text x="236" y="14" text-anchor="middle" fill="rgba(240,237,228,0.15)" font-size="7" font-family="'Outfit',sans-serif">Meñique</text>`;
+
+  // ═══ MOUNT ZONES ═══
+  const mounts = {
+    venus:    { cx: 82,  cy: 230, rx: 30, ry: 38, sym: '♀' },
+    jupiter:  { cx: 120, cy: 60,  rx: 18, ry: 18, sym: '♃' },
+    saturno:  { cx: 160, cy: 55,  rx: 17, ry: 17, sym: '♄' },
+    apolo:    { cx: 200, cy: 58,  rx: 17, ry: 17, sym: '☉' },
+    mercurio: { cx: 236, cy: 68,  rx: 16, ry: 16, sym: '☿' },
+    luna:     { cx: 240, cy: 235, rx: 28, ry: 35, sym: '☽' },
+    marte:    { cx: 160, cy: 168, rx: 24, ry: 24, sym: '♂' }
   };
 
-  Object.entries(mp).forEach(([id, m]) => {
+  Object.entries(mounts).forEach(([id, m]) => {
     const md = mountMap[id];
-    const op = md ? (md.desarrollo==='prominente'?0.12:md.desarrollo==='moderado'?0.06:0.025) : 0.04;
-    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="${m.r}" fill="rgba(${m.col},${op})" filter="url(#softglow)"/>`;
-    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="1.5" fill="rgba(${m.col},${op*3})"/>`;
-    svg += `\n  <text x="${m.cx}" y="${m.cy+4}" text-anchor="middle" fill="rgba(240,237,228,0.2)" font-size="9" font-family="serif">${m.sym}</text>`;
+    const dev = md ? md.desarrollo : 'moderado';
+    const op = dev==='prominente' ? 0.1 : dev==='moderado' ? 0.05 : 0.02;
+    const colMap = { venus:'201,168,76', jupiter:'201,168,76', luna:'74,123,212', marte:'196,104,126' };
+    const col = colMap[id] || '240,237,228';
+    svg += `\n  <ellipse cx="${m.cx}" cy="${m.cy}" rx="${m.rx}" ry="${m.ry}" fill="rgba(${col},${op})" filter="url(#sg)"/>`;
+    svg += `\n  <text x="${m.cx}" y="${m.cy + 4}" text-anchor="middle" fill="rgba(${col},${op * 2.5})" font-size="12" font-family="serif">${m.sym}</text>`;
   });
 
-  // Line paths on the schematic palm
-  const lp = {
-    vida:    { d: 'M 110,160 C 102,188 92,225 88,262 C 85,290 86,318 92,345 C 96,358 102,368 110,376', pos: [74,268], a: 'end' },
-    corazon: { d: 'M 232,158 C 215,148 195,142 172,144 C 152,146 135,152 118,162', pos: [234,152], a: 'start' },
-    cabeza:  { d: 'M 116,176 C 140,180 168,188 195,194 C 212,198 226,200 236,196', pos: [238,192], a: 'start' },
-    destino: { d: 'M 160,375 C 160,340 159,300 158,260 C 157,230 156,205 155,178', pos: [150,380], a: 'end' },
-    sol:     { d: 'M 200,168 C 202,198 206,235 208,268 C 209,284 210,296 209,308', pos: [216,304], a: 'start' },
-    salud:   { d: 'M 230,162 C 218,205 200,262 186,318 C 180,340 174,358 168,372', pos: [176,356], a: 'start' }
+  // ═══ PALM LINES ═══
+  // Positioned as if looking at an open right palm from above, mapped to the ellipse
+  const lines = {
+    vida:    { d: 'M 105,82 C 92,120 78,170 74,215 C 72,245 74,272 82,295', pos:[60,220], a:'end' },
+    corazon: { d: 'M 248,95 C 228,85 200,80 172,82 C 150,84 130,90 112,100', pos:[255,90], a:'start' },
+    cabeza:  { d: 'M 110,115 C 138,120 172,130 200,138 C 218,143 234,146 248,142', pos:[255,138], a:'start' },
+    destino: { d: 'M 160,305 C 160,270 159,230 158,195 C 157,170 156,145 155,120', pos:[148,310], a:'end' },
+    sol:     { d: 'M 205,100 C 208,135 212,175 215,215 C 216,235 217,250 216,262', pos:[224,258], a:'start' },
+    salud:   { d: 'M 244,105 C 230,150 210,210 192,265 C 184,288 178,302 172,312', pos:[178,316], a:'start' }
   };
 
-  Object.entries(lp).forEach(([id, p]) => {
+  Object.entries(lines).forEach(([id, p]) => {
     const line = lineMap[id];
     if (!line || !line.presente) return;
-    const color = lc[id]||'#C9A84C';
-    const width = sw[line.intensidad]||1.8;
-    const opacity = line.intensidad==='fuerte'?0.85:line.intensidad==='media'?0.6:0.35;
+    const color = lc[id] || '#C9A84C';
+    const width = sw[line.intensidad] || 1.8;
+    const opacity = line.intensidad==='fuerte' ? 0.85 : line.intensidad==='media' ? 0.6 : 0.35;
     const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
+
     // Glow
-    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width+4}" stroke-linecap="round" opacity="${opacity*0.2}" filter="url(#glow)"/>`;
-    // Line
-    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}"/>`;
-    // Start dot
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width+4}" stroke-linecap="round" opacity="${opacity*0.18}" filter="url(#glow)" clip-path="url(#palmClip)"/>`;
+    // Main line
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}" clip-path="url(#palmClip)"/>`;
+    // Node dots at start and end
     const sm = p.d.match(/^M\s*([\d.]+),([\d.]+)/);
-    if (sm) svg += `\n  <circle cx="${sm[1]}" cy="${sm[2]}" r="2" fill="${color}" opacity="${opacity*0.7}"/>`;
-    // Label
-    svg += `\n  <text x="${p.pos[0]}" y="${p.pos[1]}" text-anchor="${p.a}" fill="${color}" font-family="'Cormorant Garamond',serif" font-size="11" font-weight="600" opacity="0.75">${shortName}</text>`;
+    if (sm) svg += `\n  <circle cx="${sm[1]}" cy="${sm[2]}" r="2.5" fill="${color}" opacity="${opacity*0.6}"/>`;
+    const endMatch = p.d.match(/([\d.]+),([\d.]+)$/);
+    if (endMatch) svg += `\n  <circle cx="${endMatch[1]}" cy="${endMatch[2]}" r="2" fill="${color}" opacity="${opacity*0.4}"/>`;
+    // Label outside
+    svg += `\n  <text x="${p.pos[0]}" y="${p.pos[1]}" text-anchor="${p.a}" fill="${color}" font-family="'Cormorant Garamond',serif" font-size="11" font-weight="600" opacity="0.8">${shortName}</text>`;
   });
 
-  // Corner marks
-  svg += `\n  <path d="M 15,15 L 15,35 M 15,15 L 35,15" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
-  svg += `\n  <path d="M 305,15 L 305,35 M 305,15 L 285,15" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
-  svg += `\n  <path d="M 15,405 L 15,385 M 15,405 L 35,405" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
-  svg += `\n  <path d="M 305,405 L 305,385 M 305,405 L 285,405" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
+  // Corner registration marks
+  svg += `\n  <path d="M 8,8 L 8,24 M 8,8 L 24,8" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 312,8 L 312,24 M 312,8 L 296,8" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 8,332 L 8,316 M 8,332 L 24,332" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 312,332 L 312,316 M 312,332 L 296,332" stroke="rgba(201,168,76,0.1)" stroke-width="0.5"/>`;
 
   svg += '\n</svg>';
 
   // Legend
   let legend = '<div class="palm-map-legend">';
-  Object.entries(lp).forEach(([id]) => {
+  Object.entries(lines).forEach(([id]) => {
     const line = lineMap[id];
     if (!line || !line.presente) return;
-    const color = lc[id]||'#C9A84C';
+    const color = lc[id] || '#C9A84C';
     const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
     legend += `<div class="palm-legend-item"><div class="palm-legend-dot" style="background:${color}"></div>${shortName}<span class="palm-legend-intensity">(${line.intensidad})</span></div>`;
   });
@@ -1202,6 +1292,7 @@ function buildPalmMap(data) {
   </div>`;
 }
 
+// ═══════════════════════════════════════
 // RENDER RESULTS
 // ═══════════════════════════════════════
 function renderResults(data) {
@@ -1209,83 +1300,161 @@ function renderResults(data) {
   const c = document.getElementById('resultsContainer');
   const lc = { vida:'#7C6DB0', corazon:'#C9A84C', cabeza:'#4A7BD4', destino:'#C4687E', sol:'#E2CA7A', salud:'#5AB8A6' };
 
+  // EXPRESS shows: archetype, truncated soul, map, 3 lines SHORT only
+  // LOCKED: full line readings, mounts, forma, extras, full soul
+  const expressLineLimit = 3; // show first 3 lines short only
+
+  // Truncate soul to first sentence
+  const soulFull = esc(data.resumen_alma);
+  const firstDot = soulFull.indexOf('.');
+  const soulPreview = firstDot > 0 ? soulFull.substring(0, firstDot + 1) : soulFull.substring(0, 100) + '…';
+
+  // Build lines HTML
+  const linesHTML = data.lineas.map((l,i) => {
+    const isPreview = i < expressLineLimit;
+    return `
+      <div class="line-card fade-in stagger-${Math.min(i+2,5)} ${isPreview ? 'preview-only' : ''}" ${isPreview ? '' : 'onclick="this.classList.toggle(\'expanded\')"'} style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
+        <div class="line-card-header">
+          <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
+          <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
+        </div>
+        <div class="line-short">${esc(l.lectura_corta)}</div>
+        ${isPreview ? '' : `
+          <div class="expand-hint">Toca para ver lectura completa ↓</div>
+          <div class="line-full">${esc(l.lectura_completa)}</div>
+          <div class="line-keywords">${(l.keywords||[]).map(k=>`<span class="keyword">${esc(k)}</span>`).join('')}</div>
+        `}
+      </div>
+    `;
+  }).join('');
+
+  // Locked lines section (lines beyond the preview + full readings)
+  const lockedLinesHTML = `
+    <div class="locked-zone" style="min-height:180px; border-radius:12px; margin-top:8px;">
+      ${data.lineas.slice(expressLineLimit).map(l => `
+        <div class="line-card" style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
+          <div class="line-card-header">
+            <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
+            <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
+          </div>
+          <div class="line-short">${esc(l.lectura_corta)}</div>
+          <div class="line-full" style="display:block">${esc(l.lectura_completa).substring(0,120)}…</div>
+        </div>
+      `).join('')}
+      <div class="lock-overlay">
+        <div class="lock-icon">✦</div>
+        <div class="lock-text">Tu mano tiene más que contarte.<br>Las líneas del Sol, Salud y Destino guardan claves sobre tu futuro.</div>
+        <button class="lock-cta" onclick="openPayModal('completo')">Desbloquear lectura completa</button>
+        <div class="lock-hint">~800 palabras · 6 líneas · 7 montes · cristal y frecuencia</div>
+      </div>
+    </div>`;
+
+  // Locked mounts
+  const lockedMontesHTML = `
+    <div class="locked-zone" style="min-height:220px; border-radius:12px;">
+      <div class="monte-grid">
+        ${data.montes.slice(0,4).map(m => `
+          <div class="monte-card">
+            <div class="monte-header"><span class="monte-name">${esc(m.nombre)}</span><span class="monte-dev dev-${m.desarrollo}">${m.desarrollo}</span></div>
+            <div class="monte-reading">${esc(m.lectura)}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-icon">♃</div>
+        <div class="lock-text">Los 7 montes planetarios revelan tus talentos ocultos y tu potencial latente.</div>
+        <button class="lock-cta" onclick="openPayModal('completo')">Ver mis 7 montes — 1,49 €</button>
+      </div>
+    </div>`;
+
+  // Locked forma
+  const lockedFormaHTML = `
+    <div class="locked-zone" style="min-height:180px; border-radius:12px;">
+      <div class="line-card" style="border-left:2px solid var(--gold)">
+        <div class="line-name">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
+        <div class="line-full" style="display:block">${esc(data.forma_mano.descripcion).substring(0,80)}…</div>
+      </div>
+      ${data.marcas_especiales?.length ? `
+        <div style="margin-top:14px">
+          <div class="ornament-sm">Marcas especiales</div>
+          ${data.marcas_especiales.map(m => `
+            <div class="line-card" style="border-left:2px solid var(--blue)">
+              <div class="line-name" style="font-size:16px;color:var(--blue-pale)">${esc(m.tipo)}</div>
+              <div class="line-short">${esc(m.significado).substring(0,60)}…</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      <div class="lock-overlay">
+        <div class="lock-icon">✋</div>
+        <div class="lock-text">Tu forma de mano y marcas especiales esconden claves sobre quién eres realmente.</div>
+        <button class="lock-cta" onclick="openPayModal('completo')">Desbloquear — 1,49 €</button>
+      </div>
+    </div>`;
+
+  // Locked extras
+  const lockedExtrasHTML = `
+    <div class="locked-zone" style="min-height:160px; border-radius:12px;">
+      <div class="extras-row">
+        <div class="extra-card"><div class="extra-emoji">💎</div><div class="extra-label">Tu cristal</div><div class="extra-value">???</div></div>
+        <div class="extra-card"><div class="extra-emoji">🎵</div><div class="extra-label">Tu frecuencia</div><div class="extra-value">??? Hz</div></div>
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-icon">💎</div>
+        <div class="lock-text">Tu cristal protector y frecuencia de sanación están listos para ti.</div>
+        <button class="lock-cta" onclick="openPayModal('completo')">Descubrir — 1,49 €</button>
+      </div>
+    </div>`;
+
   c.innerHTML = `
     <div class="results-hero fade-in">
       <div class="archetype-label">Tu arquetipo quirológico</div>
       <h2>${esc(data.arquetipo)}</h2>
       <div class="element-badge">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
     </div>
-    <div class="soul-summary fade-in stagger-1"><p>${esc(data.resumen_alma)}</p></div>
+
+    <div class="soul-summary fade-in stagger-1">
+      <div class="soul-truncated"><p>${soulFull}</p></div>
+    </div>
+
     ${buildPalmMap(data)}
+
     <div class="section-nav fade-in stagger-2">
       <button class="nav-pill active" onclick="showSection('lineas',this)">Líneas</button>
-      <button class="nav-pill" onclick="showSection('montes',this)">Montes</button>
-      <button class="nav-pill" onclick="showSection('forma',this)">Forma</button>
-      <button class="nav-pill" onclick="showSection('extras',this)">Extras</button>
+      <button class="nav-pill locked-pill" onclick="showSection('montes',this)">Montes</button>
+      <button class="nav-pill locked-pill" onclick="showSection('forma',this)">Forma</button>
+      <button class="nav-pill locked-pill" onclick="showSection('extras',this)">Extras</button>
     </div>
+
     <div class="results-content">
       <div id="section-lineas">
-        ${data.lineas.map((l,i)=>`
-          <div class="line-card fade-in stagger-${Math.min(i+2,5)}" onclick="this.classList.toggle('expanded')" style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
-            <div class="line-card-header">
-              <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
-              <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
-            </div>
-            <div class="line-short">${esc(l.lectura_corta)}</div>
-            <div class="expand-hint">Toca para ver lectura completa ↓</div>
-            <div class="line-full">${esc(l.lectura_completa)}</div>
-            <div class="line-keywords">${(l.keywords||[]).map(k=>`<span class="keyword">${esc(k)}</span>`).join('')}</div>
-          </div>
-        `).join('')}
+        ${linesHTML}
+        ${lockedLinesHTML}
       </div>
       <div id="section-montes" style="display:none">
-        <div class="monte-grid">
-          ${data.montes.map(m=>`
-            <div class="monte-card" onclick="this.classList.toggle('expanded')">
-              <div class="monte-header">
-                <span class="monte-name">${esc(m.nombre)}</span>
-                <span class="monte-dev dev-${m.desarrollo}">${m.desarrollo}</span>
-              </div>
-              <div class="monte-reading">${esc(m.lectura)}</div>
-            </div>
-          `).join('')}
-        </div>
+        ${lockedMontesHTML}
       </div>
       <div id="section-forma" style="display:none">
-        <div class="line-card" style="border-left:2px solid var(--gold)">
-          <div class="line-name">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
-          <div class="line-full" style="display:block">${esc(data.forma_mano.descripcion)}</div>
-        </div>
-        ${data.marcas_especiales?.length?`
-          <div style="margin-top:14px">
-            <div class="ornament-sm">Marcas especiales</div>
-            ${data.marcas_especiales.map(m=>`
-              <div class="line-card" style="border-left:2px solid var(--blue)">
-                <div class="line-name" style="font-size:16px;color:var(--blue-pale)">${esc(m.tipo)}</div>
-                <div style="font-size:11px;color:var(--text-dim);margin:4px 0">${esc(m.ubicacion)}</div>
-                <div class="line-short">${esc(m.significado)}</div>
-              </div>
-            `).join('')}
-          </div>
-        `:''}
+        ${lockedFormaHTML}
       </div>
       <div id="section-extras" style="display:none">
-        <div class="extras-row">
-          <div class="extra-card"><div class="extra-emoji">💎</div><div class="extra-label">Tu cristal</div><div class="extra-value">${esc(data.cristal_recomendado.nombre)}</div><div class="extra-note">${esc(data.cristal_recomendado.razon)}</div></div>
-          <div class="extra-card"><div class="extra-emoji">🎵</div><div class="extra-label">Tu frecuencia</div><div class="extra-value">${data.frecuencia_hz.valor} Hz</div><div class="extra-note">${esc(data.frecuencia_hz.nombre)}</div></div>
-        </div>
-        <div class="extras-row">
-          <div class="extra-card" style="flex:1"><div class="extra-emoji">${data.forma_mano.elemento_emoji}</div><div class="extra-label">Elemento</div><div class="extra-value">${esc(data.elemento_dominante)}</div></div>
-        </div>
+        ${lockedExtrasHTML}
       </div>
+
+      <!-- Floating unlock CTA -->
+      <div class="floating-unlock fade-in stagger-4">
+        <div class="fu-title">Tu mano quiere contarte más</div>
+        <div class="fu-sub">Lectura completa: 6 líneas · 7 montes · marcas especiales · cristal · frecuencia</div>
+        <button class="fu-btn" onclick="openPayModal('completo')">Desbloquear por <span class="fu-price">1,49 €</span></button>
+      </div>
+
+      <!-- Other products -->
       <div class="cta-section fade-in stagger-5">
-        <h3>Profundiza tu lectura</h3>
+        <h3>Más lecturas</h3>
         <div class="ornament-sm">✦</div>
-        <p>Has visto tu lectura express. Descubre todo lo que tu mano quiere contarte.</p>
         <div class="cta-buttons">
-          <div class="price-card" onclick="openPayModal('completo')"><div class="price-row"><span class="price-name">Análisis Completo</span><span class="price-tag">1,49 €</span></div><div class="price-desc">6 líneas + 7 montes + forma + marcas. Lectura narrativa de ~800 palabras.</div></div>
           <div class="price-card price-unique" onclick="openPayModal('natal')"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">2,49 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
-          <div class="price-card" onclick="openPayModal('comparativa')"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Mano izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
+          <div class="price-card" onclick="openPayModal('comparativa')"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
           <div class="price-card" onclick="openPayModal('compatibilidad')"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">1,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
           <button class="btn-primary" onclick="window.open('https://carta.selenaura.com','_blank')" style="margin-top:14px">Obtener mi Carta Astral</button>
           <button class="btn-secondary" onclick="resetAll()">Analizar mi otra mano</button>
