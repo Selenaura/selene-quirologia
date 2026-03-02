@@ -492,14 +492,87 @@ body::before {
 
 .price-card {
   padding: 18px; background: var(--card); border: 1px solid var(--border);
-  text-align: left; transition: border-color 0.3s;
+  text-align: left; transition: all 0.3s ease; cursor: pointer; position: relative;
+  border-radius: 2px; overflow: hidden;
 }
-.price-card:hover { border-color: rgba(201,168,76,0.2); }
+.price-card::after {
+  content: 'Obtener →'; display: block; margin-top: 10px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--gold); opacity: 0.5; transition: opacity 0.3s;
+}
+.price-card:hover { border-color: rgba(201,168,76,0.3); background: var(--card-hover); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(201,168,76,0.08); }
+.price-card:hover::after { opacity: 1; }
+.price-card:active { transform: translateY(0); }
+.price-card.price-free::after { content: 'Incluido ✓'; color: var(--teal); }
 .price-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 .price-name { font-size: 14px; color: var(--white); font-weight: 500; }
 .price-tag { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--gold); }
+.price-tag.free { color: var(--teal); font-size: 16px; }
 .price-desc { font-size: 11px; color: var(--text-dim); line-height: 1.6; }
 .price-unique { border-color: rgba(74,123,212,0.25); background: linear-gradient(135deg, var(--card), rgba(42,74,138,0.08)); }
+.price-unique::before {
+  content: '★ RECOMENDADO'; position: absolute; top: 0; right: 0;
+  background: linear-gradient(135deg, var(--blue-deep), var(--blue));
+  color: var(--white); font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
+  padding: 3px 10px; font-family: var(--sans);
+}
+
+/* ═══ PAYMENT MODAL ═══ */
+.pay-overlay {
+  position: fixed; inset: 0; background: rgba(7,10,18,0.92); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: all 0.3s ease;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.pay-overlay.active { opacity: 1; visibility: visible; }
+.pay-modal {
+  background: var(--bg2); border: 1px solid var(--gold-dim);
+  max-width: 380px; width: 90%; padding: 32px 28px; text-align: center;
+  position: relative; animation: modalIn 0.3s ease;
+}
+@keyframes modalIn { from { transform: translateY(20px) scale(0.96); opacity: 0; } to { transform: none; opacity: 1; } }
+.pay-modal-close {
+  position: absolute; top: 12px; right: 14px; background: none; border: none;
+  color: var(--text-dim); font-size: 20px; cursor: pointer; padding: 4px;
+}
+.pay-modal-close:hover { color: var(--white); }
+.pay-modal h3 {
+  font-family: var(--serif); font-size: 22px; color: var(--gold-light);
+  font-weight: 500; margin-bottom: 6px;
+}
+.pay-modal .pay-price {
+  font-family: var(--serif); font-size: 36px; color: var(--gold);
+  font-weight: 600; margin: 12px 0;
+}
+.pay-modal .pay-desc {
+  font-size: 13px; color: var(--text-mid); line-height: 1.7; margin-bottom: 20px;
+}
+.pay-modal .pay-features {
+  text-align: left; margin: 16px 0 24px; padding: 0 8px;
+}
+.pay-modal .pay-feature {
+  font-size: 12px; color: var(--text); padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px; align-items: baseline;
+}
+.pay-modal .pay-feature:last-child { border-bottom: none; }
+.pay-modal .pay-feature .pf-icon { color: var(--gold); font-size: 10px; flex-shrink: 0; }
+.pay-modal .btn-pay {
+  width: 100%; padding: 14px; background: linear-gradient(135deg, var(--gold), #B8943F);
+  border: none; color: var(--bg); font-family: var(--sans); font-size: 14px;
+  font-weight: 600; letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
+  text-transform: uppercase;
+}
+.pay-modal .btn-pay:hover { box-shadow: 0 4px 24px rgba(201,168,76,0.35); transform: translateY(-1px); }
+.pay-modal .pay-soon {
+  width: 100%; padding: 14px; background: var(--card);
+  border: 1px solid var(--gold-dim); color: var(--gold);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  letter-spacing: 0.5px; cursor: default;
+}
+.pay-modal .pay-note {
+  font-size: 10px; color: var(--text-dim); margin-top: 12px; line-height: 1.5;
+}
 
 .disclaimer {
   margin: 28px 24px 0; padding: 18px; border-top: 1px solid var(--border);
@@ -918,7 +991,53 @@ async function callClaudeVision(imgUrl, ans) {
   const base64 = imgUrl.split(',')[1];
   const mt = imgUrl.split(';')[0].split(':')[1] || 'image/jpeg';
   const ctx = buildContext(ans);
-  const sys = `Eres Selene, quiróloga experta (Cheiro, Benham, Goldberg). Quirología moderna + dermatoglifos.\nIDENTIDAD: Cálida, sabia, poética, precisa. Español. Tuteas. NUNCA menciones IA/AI/algoritmo/machine learning.\nCONTEXTO (integra NATURALMENTE como si la mano lo revelara — NUNCA digas que te lo han dicho):\n${ctx}\nREGLAS: Si amor→corazón+Venus protagonistas. Si trabajo→destino+Júpiter/Mercurio. Si transición→bifurcaciones=confirmación. Si intuitiva→Luna+cabeza curva. Si racional→cabeza recta+Mercurio. Si pregunta→resumen_alma la responde. Rainbow ruse: "Proyectas X pero dentro hay Y".\nANALIZA: Forma(Fuego/Tierra/Aire/Agua), Líneas(Vida,Corazón,Cabeza,Destino,Sol,Salud), Montes(Venus,Júpiter,Saturno,Apolo,Mercurio,Luna,Marte), Marcas.\nRESPONDE SOLO JSON VÁLIDO sin backticks:\n{"forma_mano":{"tipo":"","descripcion":"2-3 frases","elemento_emoji":""},"lineas":[{"nombre":"","id":"vida|corazon|cabeza|destino|sol|salud","presente":true,"intensidad":"fuerte|media|suave","lectura_corta":"1 frase","lectura_completa":"5-7 frases personalizadas","keywords":["",""]}],"montes":[{"nombre":"","id":"","desarrollo":"prominente|moderado|plano","lectura":"2-3 frases"}],"marcas_especiales":[{"tipo":"","ubicacion":"","significado":""}],"resumen_alma":"6-8 frases integrando contexto","cristal_recomendado":{"nombre":"","razon":""},"frecuencia_hz":{"valor":432,"nombre":"","razon":""},"elemento_dominante":"","arquetipo":"El/La [único]","confianza_analisis":"alta|media|baja"}`;
+  const sys = `Eres Selene, maestra quiróloga. Linaje: Cheiro (Language of the Hand, 1897), William Benham (Laws of Scientific Hand Reading), Ellen Goldberg, dermatoglifos modernos. Has leído más de 10.000 manos.
+
+IDENTIDAD: Cálida, sabia, poética pero técnicamente precisa. Español neutro. Tuteas. NUNCA menciones: IA, AI, algoritmo, machine learning, modelo, visión computacional, Claude, GPT, API, red neuronal. SÍ puedes decir: análisis quirológico, lectura dermatoglífica, cartografía palmar, mapa de tu palma.
+
+CONTEXTO PERSONAL (integra NATURALMENTE como si la MANO lo revelara — NUNCA digas "me has dicho" ni "según tus respuestas"):
+${ctx}
+
+ENFOQUE POR CONTEXTO:
+Si AMOR → protagonistas: Corazón + Venus + Líneas de Unión. Secundarios: Júpiter, Luna.
+Si TRABAJO → protagonistas: Destino + Júpiter + Mercurio + Sol. Secundarios: Marte.
+Si AUTOCONOCIMIENTO → equilibrar todos, protagonizar Cabeza + Forma + Luna.
+Si TRANSICIÓN → bifurcaciones/rupturas = CONFIRMACIÓN positiva. Destino como brújula.
+Si INTUITIVA → Luna, Cabeza curvada, Cruz Mística, Anillo de Salomón.
+Si RACIONAL → Cabeza recta/larga, Mercurio, dedos nudosos.
+Si PREGUNTA LIBRE → resumen_alma DEBE responderla indirectamente via la palma.
+
+TÉCNICAS:
+1. Rainbow Ruse: "Proyectas [X] pero tu monte de [Y] susurra [opuesto complementario]."
+2. Barnum Calibrado: Elemento como ancla → "Como mano de [Elem], tienes [fortaleza], pero tu línea de [X] revela [sombra]."
+3. Validación Específica: Ancla en detalles REALES de la imagen.
+4. Temporalidad: Inferior=raíces/pasado. Superior=futuro.
+
+FORMA DE MANO (d'Arpentigny): 🔥FUEGO(rectangular+cortos)=dinámica,líder,pocas líneas profundas. 🌍TIERRA(cuadrada+cortos)=estable,pragmática,pocas líneas definidas. 💨AIRE(cuadrada+largos)=intelectual,analítica,muchas líneas finas. 💧AGUA(rectangular+largos)=sensible,intuitiva,líneas fluidas.
+
+6 LÍNEAS:
+■ VIDA: Vitalidad NO longevidad. Profunda=robusta. Cadenas=estrés. Ramificaciones↑=crecimiento. Paralela=protección. Unida a Cabeza=cautela juvenil. Separada=independencia.
+■ CORAZÓN: Estilo de amar. Bajo Júpiter=idealismo. Bajo Saturno=práctico. Curvada↑=expresiva. Recta=cerebral. Cadenas=turbulencia. Simia=intensidad extrema.
+■ CABEZA: Carácter mental. Recta=lógica. Curvada↓Luna=creatividad. Bifurcada="Marca del Escritor"(Benham)=doble don. Isla=confusión temporal.
+■ DESTINO: Propósito vital. Desde muñeca=independencia temprana. Desde Vida=familia. Desde Luna=público/creativo. Centro palma=vocación tardía. Rupturas=reinvenciones.
+■ SOL/APOLO: Carisma, reconocimiento. Presente=talento. Ausente=éxito por esfuerzo.
+■ SALUD/MERCURIO: Ausente=BUENA señal. Presente=don comunicativo. Ondulada=nervios sensibles.
+
+7 MONTES: ♀Venus(base pulgar)=amor,vitalidad. ♃Júpiter(bajo índice)=ambición,liderazgo; cruz=unión afortunada. ♄Saturno(bajo medio)=disciplina,sabiduría. ☉Apolo(bajo anular)=creatividad; estrella=fama. ☿Mercurio(bajo meñique)=comunicación; 3 líneas verticales="Sanador". ☽Luna(borde exterior)=intuición,subconsciente. ♂Marte=coraje(inferior),resistencia(superior),temperamento(llanura).
+
+MARCAS: ✦Estrella=evento notable. ✚Cruz=decisión kármica. △Triángulo=talento práctico. □Cuadrado=protección. ○Isla=debilidad temporal. Cruz Mística=intuición profunda. Anillo de Salomón=sabiduría.
+
+REGLAS:
+1. NUNCA "no puedo ver". Intensidad "suave" si difuso.
+2. Mínimo 4 líneas + 4 montes + 1 marca.
+3. ESPECÍFICO: MAL="eres especial". BIEN="tu corazón termina bajo Júpiter con bifurcación — amas con idealismo pero tu mente necesita entender por qué."
+4. NUNCA diagnósticos médicos ni predicciones negativas.
+5. No palma → {"error":"no_palm_detected","mensaje":"No he podido identificar una palma clara. Asegúrate de mostrar tu palma abierta con buena luz."}
+6. Lectura IRREPETIBLE. Mínimo 800 palabras. confianza: alta/media/baja.
+
+JSON VÁLIDO sin backticks:
+{"forma_mano":{"tipo":"","descripcion":"2-3 frases","elemento_emoji":""},"lineas":[{"nombre":"","id":"vida|corazon|cabeza|destino|sol|salud","presente":true,"intensidad":"fuerte|media|suave","lectura_corta":"1 frase","lectura_completa":"5-7 frases PERSONALIZADAS","keywords":["",""]}],"montes":[{"nombre":"","id":"","desarrollo":"prominente|moderado|plano","lectura":"2-3 frases"}],"marcas_especiales":[{"tipo":"","ubicacion":"","significado":""}],"resumen_alma":"6-8 frases poéticas respondiendo pregunta libre","cristal_recomendado":{"nombre":"","razon":""},"frecuencia_hz":{"valor":432,"nombre":"","razon":""},"elemento_dominante":"","arquetipo":"El/La [único]","confianza_analisis":"alta|media|baja"}`;
+
   const r = await fetch('/api/quirologia', {
     method: 'POST', headers: {'Content-Type':'application/json'},
     body: JSON.stringify({ model:'claude-sonnet-4-5-20250929', max_tokens:4000, system:sys,
@@ -1010,10 +1129,10 @@ function renderResults(data) {
         <div class="ornament-sm">✦</div>
         <p>Has visto tu lectura express. Descubre todo lo que tu mano quiere contarte.</p>
         <div class="cta-buttons">
-          <div class="price-card"><div class="price-row"><span class="price-name">Análisis Completo</span><span class="price-tag">1,49 €</span></div><div class="price-desc">6 líneas + 7 montes + forma + marcas. Lectura narrativa de ~800 palabras.</div></div>
-          <div class="price-card price-unique"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">2,49 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
-          <div class="price-card"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Mano izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
-          <div class="price-card"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">1,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
+          <div class="price-card" onclick="openPayModal('completo')"><div class="price-row"><span class="price-name">Análisis Completo</span><span class="price-tag">1,49 €</span></div><div class="price-desc">6 líneas + 7 montes + forma + marcas. Lectura narrativa de ~800 palabras.</div></div>
+          <div class="price-card price-unique" onclick="openPayModal('natal')"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">2,49 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
+          <div class="price-card" onclick="openPayModal('comparativa')"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Mano izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
+          <div class="price-card" onclick="openPayModal('compatibilidad')"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">1,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
           <button class="btn-primary" onclick="window.open('https://carta.selenaura.com','_blank')" style="margin-top:14px">Obtener mi Carta Astral</button>
           <button class="btn-secondary" onclick="resetAll()">Analizar mi otra mano</button>
         </div>
@@ -1032,6 +1151,64 @@ function showSection(id, btn) {
 }
 
 function resetAll() { selectedImage=null; currentQ=0; answers={}; resetCapture(); goTo('ritual'); }
+
+// ═══════════════════════════════════════
+// PAYMENT MODAL
+// ═══════════════════════════════════════
+const payProducts = {
+  completo: {
+    name: 'Análisis Completo',
+    price: '1,49 €',
+    desc: 'Tu lectura quirológica completa: las 6 líneas principales, los 7 montes planetarios, forma de la mano, marcas especiales y un retrato narrativo de ~800 palabras.',
+    features: ['6 líneas principales analizadas en profundidad', '7 montes planetarios interpretados', 'Forma de la mano y elemento dominante', 'Marcas especiales (estrellas, cruces, triángulos)', 'Resumen del alma — retrato narrativo completo', 'Cristal y frecuencia personalizada'],
+    stripe: 'https://buy.stripe.com/fZubIU2sv60G3uQbX74Ni00'
+  },
+  natal: {
+    name: 'Quirología + Carta Natal ✦',
+    price: '2,49 €',
+    desc: 'La fusión más potente: tu lectura de palma cruzada con tu carta astral. Descubre cómo lo que dicen tus estrellas se refleja en tus manos.',
+    features: ['Todo lo del Análisis Completo', 'Carta natal personalizada de 15 secciones', 'Cruces palma-astrología exclusivos', 'Consulta intuitiva integrada', 'Cristal, frecuencia y ritual personalizados', '★ Producto ÚNICO en el mercado'],
+    stripe: 'https://buy.stripe.com/28E28kffhgFk5CY3qB4Ni01'
+  },
+  comparativa: {
+    name: 'Comparativa de Manos',
+    price: '0,99 €',
+    desc: 'Tu mano izquierda guarda tu potencial innato; la derecha, lo que has construido. Descubre qué talentos tienes dormidos y cuáles ya has activado.',
+    features: ['Análisis de ambas manos', 'Potencial innato vs. talentos desarrollados', 'Talentos dormidos identificados', 'Mapa de evolución personal'],
+    stripe: 'https://buy.stripe.com/5kQ28k0kn0Gme9u7GR4Ni02'
+  },
+  compatibilidad: {
+    name: 'Compatibilidad de Manos',
+    price: '1,99 €',
+    desc: 'Compara tu palma con la de otra persona. Descubre la alquimia entre vuestros elementos, la armonía de vuestras líneas y los puntos de conexión profunda.',
+    features: ['Análisis de ambas palmas', 'Compatibilidad elemental (fuego+agua, etc.)', 'Líneas del corazón comparadas', 'Puntos de conexión y tensión', 'Consejo quirológico para la relación'],
+    stripe: 'https://buy.stripe.com/5kQ9AMc353Sy9Tegdn4Ni03'
+  }
+};
+
+function openPayModal(productId) {
+  const p = payProducts[productId];
+  if (!p) return;
+  let featHtml = p.features.map(f => `<div class="pay-feature"><span class="pf-icon">✦</span><span>${esc(f)}</span></div>`).join('');
+  const hasStripe = p.stripe && p.stripe.length > 5;
+  const btnHtml = hasStripe
+    ? `<button class="btn-pay" onclick="window.open('${p.stripe}','_blank')">Pagar ${p.price}</button><div class="pay-note">Pago seguro con Stripe · Recibirás tu lectura al instante</div>`
+    : `<div class="pay-soon">✦ Próximamente ✦</div><div class="pay-note">Estamos preparando este servicio. Síguenos en <a href="https://instagram.com/selenaura" target="_blank" style="color:var(--gold)">@selenaura</a> para ser la primera en saberlo.</div>`;
+  const overlay = document.createElement('div');
+  overlay.className = 'pay-overlay';
+  overlay.id = 'payOverlay';
+  overlay.innerHTML = `<div class="pay-modal"><button class="pay-modal-close" onclick="closePayModal()">✕</button><div class="ornament-sm" style="margin-bottom:8px">✦</div><h3>${esc(p.name)}</h3><div class="pay-price">${p.price}</div><div class="pay-desc">${esc(p.desc)}</div><div class="pay-features">${featHtml}</div>${btnHtml}</div>`;
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closePayModal(); });
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.classList.add('active'));
+}
+
+function closePayModal() {
+  const o = document.getElementById('payOverlay');
+  if (!o) return;
+  o.classList.remove('active');
+  setTimeout(() => o.remove(), 300);
+}
 
 // ═══════════════════════════════════════
 // DEMO DATA
