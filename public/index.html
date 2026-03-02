@@ -580,6 +580,44 @@ body::before {
 }
 .disclaimer p { font-size: 10px; color: var(--text-dim); line-height: 1.7; letter-spacing: 0.2px; }
 
+/* ═══ PALM MAP ═══ */
+.palm-map-container {
+  margin: 20px 16px; padding: 20px 12px 16px;
+  background: linear-gradient(180deg, var(--card), rgba(15,22,40,0.6));
+  border: 1px solid var(--border); position: relative; overflow: hidden;
+}
+.palm-map-container::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 30%, rgba(74,123,212,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.palm-map-title {
+  text-align: center; font-family: var(--serif); font-size: 16px;
+  color: var(--gold-light); font-weight: 500; margin-bottom: 4px; position: relative;
+}
+.palm-map-subtitle {
+  text-align: center; font-size: 10px; color: var(--text-dim);
+  letter-spacing: 1.5px; text-transform: uppercase; font-family: var(--sans);
+  margin-bottom: 16px; position: relative;
+}
+.palm-map-svg { display: block; margin: 0 auto; max-width: 280px; width: 100%; position: relative; }
+.palm-map-legend {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px;
+  margin-top: 16px; position: relative;
+}
+.palm-legend-item {
+  display: flex; align-items: center; gap: 5px; font-size: 10px;
+  font-family: var(--sans); color: var(--text-mid); cursor: pointer;
+  transition: opacity 0.3s;
+}
+.palm-legend-item:hover { opacity: 1; }
+.palm-legend-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.palm-legend-intensity {
+  font-size: 8px; opacity: 0.6; margin-left: 2px;
+}
+
 /* ═══ ANIMATIONS ═══ */
 .fade-in { animation: fadeIn 0.7s ease forwards; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -1049,6 +1087,116 @@ JSON VÁLIDO sin backticks:
 }
 
 // ═══════════════════════════════════════
+// PALM MAP SVG
+// ═══════════════════════════════════════
+function buildPalmMap(data) {
+  const lc = { vida:'#7C6DB0', corazon:'#C9A84C', cabeza:'#4A7BD4', destino:'#C4687E', sol:'#E2CA7A', salud:'#5AB8A6' };
+  const sw = { fuerte: 2.8, media: 2, suave: 1.2 };
+  const lineMap = {};
+  (data.lineas||[]).forEach(l => { lineMap[l.id] = l; });
+
+  // SVG paths for a stylized right palm (viewBox 0 0 300 420)
+  const paths = {
+    vida:    { d: 'M 108,120 C 95,155 78,200 72,250 C 68,280 70,310 78,345 C 82,358 88,370 96,380', label: [62,255], labelAnchor: 'end' },
+    corazon: { d: 'M 240,130 C 220,115 195,108 170,112 C 150,115 135,122 118,132', label: [242,122], labelAnchor: 'start' },
+    cabeza:  { d: 'M 115,145 C 135,148 165,155 195,165 C 215,172 232,178 245,175', label: [247,170], labelAnchor: 'start' },
+    destino: { d: 'M 168,370 C 166,330 164,290 162,250 C 160,220 158,190 155,160', label: [170,375], labelAnchor: 'start' },
+    sol:     { d: 'M 210,155 C 212,185 215,220 218,255 C 220,275 221,290 220,300', label: [228,295], labelAnchor: 'start' },
+    salud:   { d: 'M 235,142 C 220,195 200,260 185,320 C 178,345 172,360 168,370', label: [178,350], labelAnchor: 'start' }
+  };
+
+  // Mount positions (cx, cy, r)
+  const mounts = {
+    venus:    { cx: 98, cy: 300, r: 38, label: 'Venus' },
+    jupiter:  { cx: 130, cy: 105, r: 18, label: 'Júpiter' },
+    saturno:  { cx: 162, cy: 95, r: 16, label: 'Saturno' },
+    apolo:    { cx: 198, cy: 100, r: 16, label: 'Apolo' },
+    mercurio: { cx: 232, cy: 115, r: 15, label: 'Mercurio' },
+    luna:     { cx: 230, cy: 310, r: 32, label: 'Luna' },
+    marte:    { cx: 165, cy: 210, r: 22, label: 'Marte' }
+  };
+
+  // Mount development from data
+  const mountMap = {};
+  (data.montes||[]).forEach(m => { mountMap[m.id] = m; });
+
+  let svg = `<svg class="palm-map-svg" viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softglow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- Hand outline -->
+  <path d="M 88,390 C 65,360 52,310 55,260 C 56,235 60,210 68,190 C 72,178 78,168 85,160
+           L 90,148 C 85,130 82,108 84,88 C 86,72 92,58 98,50 C 104,42 110,40 115,44
+           C 120,48 122,58 120,72 C 118,86 115,102 112,118
+           L 118,120 C 122,108 128,82 132,62 C 136,42 140,28 146,20
+           C 152,12 158,10 164,14 C 170,18 172,30 172,46 C 172,62 168,84 164,106
+           L 160,120 C 166,96 172,68 178,46 C 184,24 190,10 198,8
+           C 206,6 212,12 214,24 C 216,36 214,56 210,80 C 206,104 202,120 200,130
+           L 202,128 C 210,108 218,86 226,72 C 234,58 240,52 246,54
+           C 252,56 254,66 252,80 C 250,94 244,112 238,130
+           L 242,135 C 250,130 258,126 264,130 C 270,134 272,142 268,155
+           C 264,168 256,180 248,190
+           C 260,220 262,260 255,300 C 248,340 235,370 218,392
+           C 200,415 175,420 155,418 C 135,416 115,408 100,398
+           Z"
+    fill="none" stroke="rgba(201,168,76,0.12)" stroke-width="1.2"/>
+
+  <!-- Finger joints (subtle) -->
+  <line x1="95" y1="148" x2="240" y2="135" stroke="rgba(201,168,76,0.06)" stroke-width="0.6" stroke-dasharray="2,4"/>
+  <line x1="85" y1="168" x2="248" y2="158" stroke="rgba(201,168,76,0.04)" stroke-width="0.5" stroke-dasharray="2,4"/>`;
+
+  // Draw mounts (subtle circles)
+  Object.entries(mounts).forEach(([id, m]) => {
+    const md = mountMap[id];
+    const opacity = md ? (md.desarrollo === 'prominente' ? 0.12 : md.desarrollo === 'moderado' ? 0.06 : 0.02) : 0.04;
+    const color = id === 'venus' ? '201,168,76' : id === 'luna' ? '74,123,212' : id === 'marte' ? '196,104,126' : '240,237,228';
+    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="${m.r}" fill="rgba(${color},${opacity})" filter="url(#softglow)"/>`;
+    svg += `\n  <text x="${m.cx}" y="${m.cy + 3}" text-anchor="middle" fill="rgba(240,237,228,0.18)" font-family="'Outfit',sans-serif" font-size="7" font-weight="500">${m.label}</text>`;
+  });
+
+  // Draw lines
+  Object.entries(paths).forEach(([id, p]) => {
+    const line = lineMap[id];
+    if (!line || !line.presente) return;
+    const color = lc[id] || '#C9A84C';
+    const width = sw[line.intensidad] || 2;
+    const opacity = line.intensidad === 'fuerte' ? 0.9 : line.intensidad === 'media' ? 0.65 : 0.4;
+
+    // Glow under
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width + 3}" stroke-linecap="round" opacity="${opacity * 0.25}" filter="url(#glow)"/>`;
+    // Main line
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}"/>`;
+    // Label
+    const [lx, ly] = p.label;
+    const anchor = p.labelAnchor || 'start';
+    const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
+    svg += `\n  <text x="${lx}" y="${ly}" text-anchor="${anchor}" fill="${color}" font-family="'Cormorant Garamond',serif" font-size="10" font-weight="500" opacity="0.8">${shortName}</text>`;
+  });
+
+  svg += '\n</svg>';
+
+  // Legend
+  let legend = '<div class="palm-map-legend">';
+  Object.entries(paths).forEach(([id]) => {
+    const line = lineMap[id];
+    if (!line || !line.presente) return;
+    const color = lc[id] || '#C9A84C';
+    const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
+    legend += `<div class="palm-legend-item"><div class="palm-legend-dot" style="background:${color}"></div>${shortName}<span class="palm-legend-intensity">(${line.intensidad})</span></div>`;
+  });
+  legend += '</div>';
+
+  return `<div class="palm-map-container fade-in stagger-1">
+    <div class="palm-map-title">Mapa de tu palma</div>
+    <div class="palm-map-subtitle">✦ Cartografía quirológica ✦</div>
+    ${svg}
+    ${legend}
+  </div>`;
+}
+
+// ═══════════════════════════════════════
 // RENDER RESULTS
 // ═══════════════════════════════════════
 function renderResults(data) {
@@ -1063,6 +1211,7 @@ function renderResults(data) {
       <div class="element-badge">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
     </div>
     <div class="soul-summary fade-in stagger-1"><p>${esc(data.resumen_alma)}</p></div>
+    ${buildPalmMap(data)}
     <div class="section-nav fade-in stagger-2">
       <button class="nav-pill active" onclick="showSection('lineas',this)">Líneas</button>
       <button class="nav-pill" onclick="showSection('montes',this)">Montes</button>
