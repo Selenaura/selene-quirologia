@@ -730,8 +730,8 @@ const QUESTIONS = [
     sublabel: 'Tu forma de percibir el mundo influye en cómo se manifiestan tus líneas.',
     type: 'select',
     options: [
-      { emoji: '🧠', text: 'Más racional y analítica' },
-      { emoji: '🔮', text: 'Más intuitiva y emocional' },
+      { emoji: '🧠', text: 'Razón primero — pienso, analizo, decido' },
+      { emoji: '🔮', text: 'Intuición primero — siento, percibo, confío' },
       { emoji: '🌀', text: 'Depende del día — soy ambas' },
     ],
     hasOther: true, otherPlaceholder: 'Descríbete a tu manera…'
@@ -744,8 +744,8 @@ const QUESTIONS = [
     options: [
       { emoji: '💕', text: 'En pareja, bien' },
       { emoji: '💔', text: 'En pareja, pero con dudas' },
-      { emoji: '🦋', text: 'Soltera y abierta' },
-      { emoji: '🛡️', text: 'Soltera por elección' },
+      { emoji: '🦋', text: 'Sin pareja, con el corazón abierto' },
+      { emoji: '🛡️', text: 'Sin pareja, por elección propia' },
     ],
     hasOther: true, otherPlaceholder: 'Cuéntanos tu situación…'
   },
@@ -1193,7 +1193,7 @@ function openPayModal(productId) {
   const hasStripe = p.stripe && p.stripe.length > 5;
   const btnHtml = hasStripe
     ? `<button class="btn-pay" onclick="window.open('${p.stripe}','_blank')">Pagar ${p.price}</button><div class="pay-note">Pago seguro con Stripe · Recibirás tu lectura al instante</div>`
-    : `<div class="pay-soon">✦ Próximamente ✦</div><div class="pay-note">Estamos preparando este servicio. Síguenos en <a href="https://instagram.com/selenaura" target="_blank" style="color:var(--gold)">@selenaura</a> para ser la primera en saberlo.</div>`;
+    : `<div class="pay-soon">✦ Próximamente ✦</div><div class="pay-note">Estamos preparando este servicio. Síguenos en <a href="https://instagram.com/selenaura" target="_blank" style="color:var(--gold)">@selenaura</a> para enterarte antes que nadie.</div>`;
   const overlay = document.createElement('div');
   overlay.className = 'pay-overlay';
   overlay.id = 'payOverlay';
@@ -1216,13 +1216,13 @@ function closePayModal() {
 function getDemoData() {
   const f=answers.focus||'', m=answers.moment||'', id=answers.identity||'', lv=answers.love||'', q=answers.question||'';
   const isL=f.includes('Amor'), isW=f.includes('Trabajo'), isCh=m.includes('cambio')||m.includes('transición'), isSe=m.includes('Buscando');
-  const isR=id.includes('racional'), isI=id.includes('intuitiva'), isSi=lv.includes('Soltera');
+  const isR=id.includes('Razón'), isI=id.includes('Intuición'), isSi=lv.includes('Sin pareja');
 
   const heartS = isL&&lv.includes('dudas') ? 'Tu corazón ya sabe la respuesta — las dudas son la puerta, no el muro.'
     : isL&&isSi ? 'Tu línea del corazón se prepara para algo grande — y lo sabe.'
     : 'Amas con toda el alma — pero has aprendido a proteger tu corazón sin cerrarlo.';
   const heartF = isL&&lv.includes('dudas') ? 'Tu línea del corazón se curva profundamente hacia Júpiter, señal de idealismo amoroso genuino. Pero hay cadenas en su recorrido reciente — no son heridas, son preguntas que tu corazón necesita formularse. Las dudas que sientes no son debilidad: son tu intuición señalándote algo que tu mente aún no quiere ver. La profundidad de esta línea promete que tu capacidad de amar es inmensa, pero tu mano te pide que esta vez elijas con los ojos abiertos.'
-    : isL&&isSi ? 'Tu línea del corazón es profunda pero se curva hacia dentro antes de alcanzar Júpiter. No has cerrado tu corazón, sino que lo estás preparando. Hay una madurez emocional que dice que lo próximo que permitas entrar será diferente a todo lo anterior. No llegas vacía al amor — llegas sabia. Y la ramificación ascendente al final sugiere que algo se gesta, aunque tú aún no lo veas.'
+    : isL&&isSi ? 'Tu línea del corazón es profunda pero se curva hacia dentro antes de alcanzar Júpiter. No has cerrado tu corazón, sino que lo estás preparando. Hay una madurez emocional que dice que lo próximo que permitas entrar será diferente a todo lo anterior. No llegas al amor con las manos vacías — llegas con sabiduría. Y la ramificación ascendente al final sugiere que algo se gesta, aunque tú aún no lo veas.'
     : 'Tu línea del corazón se curva con determinación hacia Júpiter. Amas con idealismo, con un sentido casi espiritual de lo que una relación debe ser. No te conformas con conexiones superficiales — necesitas profundidad y significado. Las pequeñas cadenas que aparecen no hablan de fracasos, sino de períodos donde tu corazón aprendió lecciones necesarias.';
 
   const headS = isR ? 'Una mente brillante y estructurada — pero tu mano revela una intuición que no estás usando.'
@@ -1234,7 +1234,7 @@ function getDemoData() {
 
   const destS = isCh||isSe ? 'El cambio que estás viviendo no es un accidente — tu mano lo confirma.'
     : isW ? 'Tu propósito profesional está escrito aquí — y aún no has desplegado todo tu potencial.'
-    : 'Tu propósito no vino dado — lo estás construyendo tú misma, paso a paso.';
+    : 'Tu propósito no vino dado — lo estás construyendo con tus propias manos, paso a paso.';
   const destF = isCh||isSe ? 'Tu línea del destino muestra una interrupción clara y un nuevo trazo que emerge con fuerza. El cambio de dirección que atraviesas está literalmente escrito en tu mano. No es caos — es recalibración. La nueva línea emerge más profunda que la anterior: esta dirección te alinea más con tu propósito real.'
     : isW ? 'Tu línea del destino asciende con determinación hacia Saturno. Vocación seria y profunda que no se conforma con lo mediocre. Las ramificaciones son oportunidades que tu mano anticipa. El reconocimiento vendrá, pero a tu ritmo.'
     : 'Tu línea del destino emerge desde el centro de la palma. No naciste con un camino predeterminado. Tu vocación es algo que descubres y construyes activamente.';
@@ -1261,7 +1261,7 @@ function getDemoData() {
       {nombre:"Júpiter",id:"jupiter",desarrollo:isW?"prominente":"moderado",lectura:isW?"Ambición genuina y liderazgo natural. Buscas impacto y significado.":"Ambición sana y espiritualidad genuina."},
       {nombre:"Saturno",id:"saturno",desarrollo:"moderado",lectura:"Disciplina interior y sabiduría ganada a pulso."},
       {nombre:"Apolo",id:"apolo",desarrollo:"prominente",lectura:"Confirma tu naturaleza creativa. Necesitas belleza y expresión artística."},
-      {nombre:"Mercurio",id:"mercurio",desarrollo:isR?"prominente":"moderado",lectura:isR?"Comunicación poderosa y mente analítica. Podrías persuadir a quien quisieras.":"Comunicación fluida. Podrías ser excelente consejera o escritora."},
+      {nombre:"Mercurio",id:"mercurio",desarrollo:isR?"prominente":"moderado",lectura:isR?"Comunicación poderosa y mente analítica. Podrías persuadir a quien quisieras.":"Comunicación fluida. Tienes don natural para la escritura o el consejo."},
       {nombre:"Luna",id:"luna",desarrollo:isI?"prominente":"moderado",lectura:isI?"Tu subconsciente es tu mayor aliado. Los sueños, las corazonadas, las señales que otros ignoran: para ti son datos reales.":"Imaginación activa y cierta sensibilidad psíquica."},
       {nombre:"Marte",id:"marte",desarrollo:"moderado",lectura:"Coraje para defender lo que amas. Tu fuerza es resiliente, no explosiva."}
     ],
@@ -1270,7 +1270,7 @@ function getDemoData() {
     cristal_recomendado:{nombre:isI?"Labradorita":isR?"Citrino":"Amatista",razon:isI?"Potencia tu intuición y protege tu sensibilidad.":isR?"Equilibra tu mente analítica con apertura emocional.":"Conecta tu dualidad mente-corazón."},
     frecuencia_hz:{valor:isL?528:isW?741:432,nombre:isL?"Frecuencia del Amor":isW?"Frecuencia de la Expresión":"Frecuencia Universal",razon:isL?"Resuena con tu línea del corazón.":isW?"Activa creatividad y comunicación.":"Armoniza cuerpo, mente y espíritu."},
     elemento_dominante:"Agua",
-    arquetipo:isI?"La Visionaria Intuitiva":isR?"La Arquitecta del Destino":"La Tejedora de Mundos",
+    arquetipo:isI?"Visionario del Alma":isR?"Arquitecto del Destino":"Alquimista de Mundos",
     confianza_analisis:"alta"
   };
 }
