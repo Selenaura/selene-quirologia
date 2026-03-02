@@ -1086,106 +1086,109 @@ JSON VÁLIDO sin backticks:
   return JSON.parse(d.content.map(x=>x.text||'').join('').replace(/```json|```/g,'').trim());
 }
 
+
 // ═══════════════════════════════════════
-// PALM MAP SVG
+// PALM MAP SVG — Constellation diagram
 // ═══════════════════════════════════════
 function buildPalmMap(data) {
   const lc = { vida:'#7C6DB0', corazon:'#C9A84C', cabeza:'#4A7BD4', destino:'#C4687E', sol:'#E2CA7A', salud:'#5AB8A6' };
-  const sw = { fuerte: 2.8, media: 2, suave: 1.2 };
+  const sw = { fuerte: 2.5, media: 1.8, suave: 1 };
   const lineMap = {};
   (data.lineas||[]).forEach(l => { lineMap[l.id] = l; });
-
-  // SVG paths for a stylized right palm (viewBox 0 0 300 420)
-  const paths = {
-    vida:    { d: 'M 112,136 C 100,165 85,205 78,248 C 74,275 74,305 80,340 C 84,355 90,368 98,378', label: [65,260], labelAnchor: 'end' },
-    corazon: { d: 'M 236,142 C 218,128 195,120 172,122 C 152,124 135,132 118,142', label: [238,134], labelAnchor: 'start' },
-    cabeza:  { d: 'M 118,156 C 140,160 168,168 195,175 C 215,180 230,183 242,180', label: [244,176], labelAnchor: 'start' },
-    destino: { d: 'M 165,375 C 164,340 162,300 160,260 C 158,230 157,200 156,170', label: [168,380], labelAnchor: 'start' },
-    sol:     { d: 'M 208,162 C 210,195 213,230 216,265 C 218,282 218,296 217,308', label: [225,302], labelAnchor: 'start' },
-    salud:   { d: 'M 232,148 C 218,200 200,265 185,325 C 180,345 175,362 170,375', label: [182,355], labelAnchor: 'start' }
-  };
-
-  // Mount positions (cx, cy, r)
-  const mounts = {
-    venus:    { cx: 100, cy: 295, r: 36, label: 'Venus' },
-    jupiter:  { cx: 128, cy: 115, r: 17, label: 'Júpiter' },
-    saturno:  { cx: 160, cy: 108, r: 15, label: 'Saturno' },
-    apolo:    { cx: 196, cy: 112, r: 15, label: 'Apolo' },
-    mercurio: { cx: 228, cy: 125, r: 14, label: 'Mercurio' },
-    luna:     { cx: 228, cy: 300, r: 30, label: 'Luna' },
-    marte:    { cx: 165, cy: 215, r: 22, label: 'Marte' }
-  };
-
-  // Mount development from data
   const mountMap = {};
   (data.montes||[]).forEach(m => { mountMap[m.id] = m; });
 
-  let svg = `<svg class="palm-map-svg" viewBox="0 0 300 420" xmlns="http://www.w3.org/2000/svg">
+  let svg = `<svg class="palm-map-svg" viewBox="0 0 320 420" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="softglow"><feGaussianBlur stdDeviation="6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="softglow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
 
-  <!-- Hand outline -->
-  <path d="M 95,385 C 78,365 65,340 60,310 C 55,280 56,250 62,220 C 66,200 72,182 80,168
-           C 84,160 88,153 90,146 C 88,134 86,118 86,104 C 86,88 90,74 96,66
-           C 102,58 108,56 114,60 C 118,63 120,70 120,80 C 120,92 118,106 116,120
-           C 116,124 116,126 116,128
-           C 120,112 126,88 132,68 C 138,48 144,34 150,26
-           C 156,18 162,18 166,22 C 170,26 172,36 172,50 C 172,66 168,86 164,108
-           C 162,116 160,124 160,128
-           C 164,110 170,84 176,62 C 182,40 188,26 194,20
-           C 200,14 206,16 210,22 C 214,28 216,42 214,60 C 212,78 208,100 204,120
-           C 202,128 202,132 202,134
-           C 208,118 214,100 222,86 C 230,72 236,64 242,64
-           C 248,64 252,72 252,84 C 252,96 248,112 242,130
-           C 240,136 238,140 236,144
-           C 244,140 252,138 258,142 C 264,146 266,154 264,164
-           C 262,174 256,184 248,194
-           C 256,218 258,250 254,282 C 250,314 240,344 224,368
-           C 210,390 190,402 168,406 C 146,410 124,404 108,394
-           Z"
-    fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+  <!-- Sacred geometry bg -->
+  <circle cx="160" cy="230" r="160" fill="none" stroke="rgba(201,168,76,0.03)" stroke-width="0.5"/>
+  <circle cx="160" cy="230" r="110" fill="none" stroke="rgba(201,168,76,0.025)" stroke-width="0.5"/>
 
-  <!-- Wrist line -->
-  <path d="M 90,388 C 120,396 160,400 200,390" fill="none" stroke="rgba(201,168,76,0.06)" stroke-width="0.5" stroke-dasharray="3,5"/>`;
+  <!-- HAND — clean iconic silhouette, open right palm -->
+  <path d="
+    M 100,380
+    C 85,360 74,330 72,295 C 70,265 74,235 82,210
+    C 86,198 90,188 94,180 L 96,170
+    C 90,155 84,130 82,112 C 80,94 84,80 92,76 C 100,72 108,78 112,92 C 116,106 115,125 114,145
+    L 114,152
+    C 118,132 124,100 130,76 C 136,52 142,36 150,32 C 158,28 164,34 166,48 C 168,62 166,86 162,114
+    L 160,134
+    C 165,110 172,78 180,56 C 188,34 196,22 204,22 C 212,22 216,34 216,52 C 216,70 212,98 206,126
+    L 204,140
+    C 210,120 218,96 226,80 C 234,64 242,58 248,62 C 254,66 256,78 252,96 C 248,114 240,135 234,150
+    L 234,155
+    C 242,152 250,152 256,158 C 262,164 262,174 258,186 C 254,198 246,210 238,218
+    C 248,245 252,280 248,312 C 244,342 234,365 218,380
+    C 202,395 180,402 160,402 C 140,402 118,395 106,386
+    Z"
+    fill="none" stroke="rgba(201,168,76,0.13)" stroke-width="0.8" stroke-linejoin="round"/>
+  `;
 
-  // Draw mounts (subtle circles)
-  Object.entries(mounts).forEach(([id, m]) => {
+  // Mount areas with planetary symbols
+  const mp = {
+    venus:    { cx: 102, cy: 290, r: 32, sym: '♀', col: '201,168,76' },
+    jupiter:  { cx: 124, cy: 145, r: 15, sym: '♃', col: '201,168,76' },
+    saturno:  { cx: 156, cy: 135, r: 14, sym: '♄', col: '240,237,228' },
+    apolo:    { cx: 192, cy: 138, r: 14, sym: '☉', col: '240,237,228' },
+    mercurio: { cx: 225, cy: 150, r: 13, sym: '☿', col: '240,237,228' },
+    luna:     { cx: 230, cy: 295, r: 28, sym: '☽', col: '74,123,212' },
+    marte:    { cx: 164, cy: 220, r: 20, sym: '♂', col: '196,104,126' }
+  };
+
+  Object.entries(mp).forEach(([id, m]) => {
     const md = mountMap[id];
-    const opacity = md ? (md.desarrollo === 'prominente' ? 0.12 : md.desarrollo === 'moderado' ? 0.06 : 0.02) : 0.04;
-    const color = id === 'venus' ? '201,168,76' : id === 'luna' ? '74,123,212' : id === 'marte' ? '196,104,126' : '240,237,228';
-    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="${m.r}" fill="rgba(${color},${opacity})" filter="url(#softglow)"/>`;
-    svg += `\n  <text x="${m.cx}" y="${m.cy + 3}" text-anchor="middle" fill="rgba(240,237,228,0.18)" font-family="'Outfit',sans-serif" font-size="7" font-weight="500">${m.label}</text>`;
+    const op = md ? (md.desarrollo==='prominente'?0.12:md.desarrollo==='moderado'?0.06:0.025) : 0.04;
+    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="${m.r}" fill="rgba(${m.col},${op})" filter="url(#softglow)"/>`;
+    svg += `\n  <circle cx="${m.cx}" cy="${m.cy}" r="1.5" fill="rgba(${m.col},${op*3})"/>`;
+    svg += `\n  <text x="${m.cx}" y="${m.cy+4}" text-anchor="middle" fill="rgba(240,237,228,0.2)" font-size="9" font-family="serif">${m.sym}</text>`;
   });
 
-  // Draw lines
-  Object.entries(paths).forEach(([id, p]) => {
+  // Line paths on the schematic palm
+  const lp = {
+    vida:    { d: 'M 110,160 C 102,188 92,225 88,262 C 85,290 86,318 92,345 C 96,358 102,368 110,376', pos: [74,268], a: 'end' },
+    corazon: { d: 'M 232,158 C 215,148 195,142 172,144 C 152,146 135,152 118,162', pos: [234,152], a: 'start' },
+    cabeza:  { d: 'M 116,176 C 140,180 168,188 195,194 C 212,198 226,200 236,196', pos: [238,192], a: 'start' },
+    destino: { d: 'M 160,375 C 160,340 159,300 158,260 C 157,230 156,205 155,178', pos: [150,380], a: 'end' },
+    sol:     { d: 'M 200,168 C 202,198 206,235 208,268 C 209,284 210,296 209,308', pos: [216,304], a: 'start' },
+    salud:   { d: 'M 230,162 C 218,205 200,262 186,318 C 180,340 174,358 168,372', pos: [176,356], a: 'start' }
+  };
+
+  Object.entries(lp).forEach(([id, p]) => {
     const line = lineMap[id];
     if (!line || !line.presente) return;
-    const color = lc[id] || '#C9A84C';
-    const width = sw[line.intensidad] || 2;
-    const opacity = line.intensidad === 'fuerte' ? 0.9 : line.intensidad === 'media' ? 0.65 : 0.4;
-
-    // Glow under
-    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width + 3}" stroke-linecap="round" opacity="${opacity * 0.25}" filter="url(#glow)"/>`;
-    // Main line
-    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}"/>`;
-    // Label
-    const [lx, ly] = p.label;
-    const anchor = p.labelAnchor || 'start';
+    const color = lc[id]||'#C9A84C';
+    const width = sw[line.intensidad]||1.8;
+    const opacity = line.intensidad==='fuerte'?0.85:line.intensidad==='media'?0.6:0.35;
     const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
-    svg += `\n  <text x="${lx}" y="${ly}" text-anchor="${anchor}" fill="${color}" font-family="'Cormorant Garamond',serif" font-size="10" font-weight="500" opacity="0.8">${shortName}</text>`;
+    // Glow
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width+4}" stroke-linecap="round" opacity="${opacity*0.2}" filter="url(#glow)"/>`;
+    // Line
+    svg += `\n  <path d="${p.d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}"/>`;
+    // Start dot
+    const sm = p.d.match(/^M\s*([\d.]+),([\d.]+)/);
+    if (sm) svg += `\n  <circle cx="${sm[1]}" cy="${sm[2]}" r="2" fill="${color}" opacity="${opacity*0.7}"/>`;
+    // Label
+    svg += `\n  <text x="${p.pos[0]}" y="${p.pos[1]}" text-anchor="${p.a}" fill="${color}" font-family="'Cormorant Garamond',serif" font-size="11" font-weight="600" opacity="0.75">${shortName}</text>`;
   });
+
+  // Corner marks
+  svg += `\n  <path d="M 15,15 L 15,35 M 15,15 L 35,15" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 305,15 L 305,35 M 305,15 L 285,15" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 15,405 L 15,385 M 15,405 L 35,405" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
+  svg += `\n  <path d="M 305,405 L 305,385 M 305,405 L 285,405" stroke="rgba(201,168,76,0.12)" stroke-width="0.5"/>`;
 
   svg += '\n</svg>';
 
   // Legend
   let legend = '<div class="palm-map-legend">';
-  Object.entries(paths).forEach(([id]) => {
+  Object.entries(lp).forEach(([id]) => {
     const line = lineMap[id];
     if (!line || !line.presente) return;
-    const color = lc[id] || '#C9A84C';
+    const color = lc[id]||'#C9A84C';
     const shortName = line.nombre.replace('Línea de la ','').replace('Línea del ','').replace('Línea de ','');
     legend += `<div class="palm-legend-item"><div class="palm-legend-dot" style="background:${color}"></div>${shortName}<span class="palm-legend-intensity">(${line.intensidad})</span></div>`;
   });
@@ -1199,7 +1202,6 @@ function buildPalmMap(data) {
   </div>`;
 }
 
-// ═══════════════════════════════════════
 // RENDER RESULTS
 // ═══════════════════════════════════════
 function renderResults(data) {
