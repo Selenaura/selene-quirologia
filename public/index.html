@@ -1386,7 +1386,7 @@ function renderResults(data) {
       <div class="lock-overlay">
         <div class="lock-icon">♃</div>
         <div class="lock-text">Los 7 montes planetarios revelan tus talentos ocultos y tu potencial latente.</div>
-        <button class="lock-cta" onclick="openPayModal('completo')">Ver mis 7 montes — 1,49 €</button>
+        <button class="lock-cta" onclick="openPayModal('completo')">Ver mis 7 montes — 9,99 €</button>
       </div>
     </div>`;
 
@@ -1411,7 +1411,7 @@ function renderResults(data) {
       <div class="lock-overlay">
         <div class="lock-icon">✋</div>
         <div class="lock-text">Tu forma de mano y marcas especiales esconden claves sobre quién eres realmente.</div>
-        <button class="lock-cta" onclick="openPayModal('completo')">Desbloquear — 1,49 €</button>
+        <button class="lock-cta" onclick="openPayModal('completo')">Desbloquear — 9,99 €</button>
       </div>
     </div>`;
 
@@ -1425,7 +1425,7 @@ function renderResults(data) {
       <div class="lock-overlay">
         <div class="lock-icon">💎</div>
         <div class="lock-text">Tu cristal protector y frecuencia de sanación están listos para ti.</div>
-        <button class="lock-cta" onclick="openPayModal('completo')">Descubrir — 1,49 €</button>
+        <button class="lock-cta" onclick="openPayModal('completo')">Descubrir — 9,99 €</button>
       </div>
     </div>`;
 
@@ -1468,7 +1468,7 @@ function renderResults(data) {
       <div class="floating-unlock fade-in stagger-4">
         <div class="fu-title">Tu mano quiere contarte más</div>
         <div class="fu-sub">Lectura completa: 6 líneas · 7 montes · marcas especiales · cristal · frecuencia</div>
-        <button class="fu-btn" onclick="openPayModal('completo')">Desbloquear por <span class="fu-price">1,49 €</span></button>
+        <button class="fu-btn" onclick="openPayModal('completo')">Desbloquear por <span class="fu-price">9,99 €</span></button>
       </div>
 
       <!-- Other products -->
@@ -1476,9 +1476,9 @@ function renderResults(data) {
         <h3>Más lecturas</h3>
         <div class="ornament-sm">✦</div>
         <div class="cta-buttons">
-          <div class="price-card price-unique" onclick="openPayModal('natal')"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">2,49 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
-          <div class="price-card" onclick="openPayModal('comparativa')"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">0,99 €</span></div><div class="price-desc">Izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
-          <div class="price-card" onclick="openPayModal('compatibilidad')"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">1,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
+          <div class="price-card price-unique" onclick="openPayModal('natal')"><div class="price-row"><span class="price-name">Quirología + Carta Natal ✦</span><span class="price-tag">14,99 €</span></div><div class="price-desc">Tu palma cruzada con tu carta astral. Único en el mundo.</div></div>
+          <div class="price-card" onclick="openPayModal('comparativa')"><div class="price-row"><span class="price-name">Comparativa de Manos</span><span class="price-tag">4,99 €</span></div><div class="price-desc">Izquierda vs. derecha — descubre qué talentos tienes dormidos.</div></div>
+          <div class="price-card" onclick="openPayModal('compatibilidad')"><div class="price-row"><span class="price-name">Compatibilidad de Manos</span><span class="price-tag">7,99 €</span></div><div class="price-desc">Compara tu palma con la de otra persona.</div></div>
           <button class="btn-primary" onclick="window.open('https://carta.selenaura.com','_blank')" style="margin-top:14px">Obtener mi Carta Astral</button>
           <button class="btn-secondary" onclick="resetAll()">Analizar mi otra mano</button>
         </div>
@@ -1504,31 +1504,31 @@ function resetAll() { selectedImage=null; currentQ=0; answers={}; resetCapture()
 const payProducts = {
   completo: {
     name: 'Análisis Completo',
-    price: '1,49 €',
+    price: '9,99 €',
     desc: 'Tu lectura quirológica completa: las 6 líneas principales, los 7 montes planetarios, forma de la mano, marcas especiales y un retrato narrativo de ~800 palabras.',
     features: ['6 líneas principales analizadas en profundidad', '7 montes planetarios interpretados', 'Forma de la mano y elemento dominante', 'Marcas especiales (estrellas, cruces, triángulos)', 'Resumen del alma — retrato narrativo completo', 'Cristal y frecuencia personalizada'],
-    stripe: 'https://buy.stripe.com/fZubIU2sv60G3uQbX74Ni00'
+    stripe: 'https://buy.stripe.com/14A5kw0kngFk8Pa0ep4Ni0c'
   },
   natal: {
     name: 'Quirología + Carta Natal ✦',
-    price: '2,49 €',
+    price: '14,99 €',
     desc: 'La fusión más potente: tu lectura de palma cruzada con tu carta astral. Descubre cómo lo que dicen tus estrellas se refleja en tus manos.',
     features: ['Todo lo del Análisis Completo', 'Carta natal personalizada de 15 secciones', 'Cruces palma-astrología exclusivos', 'Consulta intuitiva integrada', 'Cristal, frecuencia y ritual personalizados', '★ Producto ÚNICO en el mercado'],
-    stripe: 'https://buy.stripe.com/28E28kffhgFk5CY3qB4Ni01'
+    stripe: 'https://buy.stripe.com/eVq9AM1or60Gc1m7GR4Ni0d'
   },
   comparativa: {
     name: 'Comparativa de Manos',
-    price: '0,99 €',
+    price: '4,99 €',
     desc: 'Tu mano izquierda guarda tu potencial innato; la derecha, lo que has construido. Descubre qué talentos tienes dormidos y cuáles ya has activado.',
     features: ['Análisis de ambas manos', 'Potencial innato vs. talentos desarrollados', 'Talentos dormidos identificados', 'Mapa de evolución personal'],
-    stripe: 'https://buy.stripe.com/5kQ28k0kn0Gme9u7GR4Ni02'
+    stripe: 'https://buy.stripe.com/aFafZa8QT2Ou9Te6CN4Ni0f'
   },
   compatibilidad: {
     name: 'Compatibilidad de Manos',
-    price: '1,99 €',
+    price: '7,99 €',
     desc: 'Compara tu palma con la de otra persona. Descubre la alquimia entre vuestros elementos, la armonía de vuestras líneas y los puntos de conexión profunda.',
     features: ['Análisis de ambas palmas', 'Compatibilidad elemental (fuego+agua, etc.)', 'Líneas del corazón comparadas', 'Puntos de conexión y tensión', 'Consejo quirológico para la relación'],
-    stripe: 'https://buy.stripe.com/5kQ9AMc353Sy9Tegdn4Ni03'
+    stripe: 'https://buy.stripe.com/fZu5kwffh2Ou1mIbX74Ni0e'
   }
 };
 
