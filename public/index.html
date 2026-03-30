@@ -1332,36 +1332,28 @@ function renderResults(data) {
   const firstDot = soulFull.indexOf('.');
   const soulPreview = firstDot > 0 ? soulFull.substring(0, firstDot + 1) : soulFull.substring(0, 100) + '…';
 
-  // Build lines HTML
-  const linesHTML = data.lineas.map((l,i) => {
-    const isPreview = i < expressLineLimit;
+  // Build lines HTML — preview lines show lectura_corta ONLY, no paid content
+  const linesHTML = data.lineas.slice(0, expressLineLimit).map((l,i) => {
     return `
-      <div class="line-card fade-in stagger-${Math.min(i+2,5)} ${isPreview ? 'preview-only' : ''}" ${isPreview ? '' : 'onclick="this.classList.toggle(\'expanded\')"'} style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
+      <div class="line-card fade-in stagger-${i+2}" style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
         <div class="line-card-header">
           <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
           <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
         </div>
         <div class="line-short">${esc(l.lectura_corta)}</div>
-        ${isPreview ? '' : `
-          <div class="expand-hint">Toca para ver lectura completa ↓</div>
-          <div class="line-full">${esc(l.lectura_completa)}</div>
-          <div class="line-keywords">${(l.keywords||[]).map(k=>`<span class="keyword">${esc(k)}</span>`).join('')}</div>
-        `}
       </div>
     `;
   }).join('');
 
-  // Locked lines section (lines beyond the preview + full readings)
+  // Locked lines section — NO paid content in DOM, only placeholder
   const lockedLinesHTML = `
     <div class="locked-zone" style="min-height:180px; border-radius:12px; margin-top:8px;">
       ${data.lineas.slice(expressLineLimit).map(l => `
-        <div class="line-card" style="border-left:2px solid ${lc[l.id]||'#C9A84C'}">
+        <div class="line-card" style="border-left:2px solid ${lc[l.id]||'#C9A84C'};opacity:0.15">
           <div class="line-card-header">
             <div class="line-name" style="color:${lc[l.id]||'#C9A84C'}">${esc(l.nombre)}</div>
-            <span class="line-intensity intensity-${l.intensidad}">${l.intensidad}</span>
           </div>
-          <div class="line-short">${esc(l.lectura_corta)}</div>
-          <div class="line-full" style="display:block">${esc(l.lectura_completa).substring(0,120)}…</div>
+          <div class="line-short" style="filter:blur(4px);user-select:none">••••••••••••••••••••••••••••</div>
         </div>
       `).join('')}
       <div class="lock-overlay">
@@ -1372,14 +1364,14 @@ function renderResults(data) {
       </div>
     </div>`;
 
-  // Locked mounts
+  // Locked mounts — NO paid content in DOM
   const lockedMontesHTML = `
     <div class="locked-zone" style="min-height:220px; border-radius:12px;">
-      <div class="monte-grid">
+      <div class="monte-grid" style="opacity:0.1">
         ${data.montes.slice(0,4).map(m => `
           <div class="monte-card">
-            <div class="monte-header"><span class="monte-name">${esc(m.nombre)}</span><span class="monte-dev dev-${m.desarrollo}">${m.desarrollo}</span></div>
-            <div class="monte-reading">${esc(m.lectura)}</div>
+            <div class="monte-header"><span class="monte-name">${esc(m.nombre)}</span></div>
+            <div class="monte-reading" style="filter:blur(4px);user-select:none">••••••••••••••••••••</div>
           </div>
         `).join('')}
       </div>
@@ -1390,24 +1382,13 @@ function renderResults(data) {
       </div>
     </div>`;
 
-  // Locked forma
+  // Locked forma — NO paid content in DOM
   const lockedFormaHTML = `
     <div class="locked-zone" style="min-height:180px; border-radius:12px;">
-      <div class="line-card" style="border-left:2px solid var(--gold)">
+      <div class="line-card" style="border-left:2px solid var(--gold);opacity:0.15">
         <div class="line-name">${data.forma_mano.elemento_emoji} Mano de ${esc(data.forma_mano.tipo)}</div>
-        <div class="line-full" style="display:block">${esc(data.forma_mano.descripcion).substring(0,80)}…</div>
+        <div class="line-full" style="display:block;filter:blur(4px);user-select:none">••••••••••••••••••••••••••••••••</div>
       </div>
-      ${data.marcas_especiales?.length ? `
-        <div style="margin-top:14px">
-          <div class="ornament-sm">Marcas especiales</div>
-          ${data.marcas_especiales.map(m => `
-            <div class="line-card" style="border-left:2px solid var(--blue)">
-              <div class="line-name" style="font-size:16px;color:var(--blue-pale)">${esc(m.tipo)}</div>
-              <div class="line-short">${esc(m.significado).substring(0,60)}…</div>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
       <div class="lock-overlay">
         <div class="lock-icon">✋</div>
         <div class="lock-text">Tu forma de mano y marcas especiales esconden claves sobre quién eres realmente.</div>
@@ -1437,7 +1418,7 @@ function renderResults(data) {
     </div>
 
     <div class="soul-summary fade-in stagger-1">
-      <div class="soul-truncated"><p>${soulFull}</p></div>
+      <div class="soul-truncated"><p>${soulPreview}</p></div>
     </div>
 
     ${buildPalmMap(data)}
