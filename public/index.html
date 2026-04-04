@@ -619,6 +619,14 @@ body::before {
   text-align: center;
 }
 .disclaimer p { font-size: 10px; color: var(--text-dim); line-height: 1.7; letter-spacing: 0.2px; }
+/* Upsell Banner */
+.upsell-banner{margin:32px auto;max-width:560px;padding:32px 28px;border-radius:16px;background:linear-gradient(135deg,rgba(15,15,24,0.9),rgba(30,30,50,0.9));border:1.5px solid rgba(201,168,76,0.35);text-align:center;position:relative;overflow:hidden}
+.upsell-banner::before{content:'';position:absolute;inset:-1px;border-radius:16px;padding:1.5px;background:linear-gradient(135deg,rgba(201,168,76,0.5),rgba(201,168,76,0.1),rgba(201,168,76,0.5));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.upsell-banner h3{font-family:var(--serif);font-size:20px;color:var(--gold);margin-bottom:12px;font-weight:500}
+.upsell-banner p{font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:20px;font-weight:300}
+.upsell-btn{display:inline-block;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:600;text-decoration:none;transition:all 0.3s;cursor:pointer;border:none}
+.upsell-btn.primary{background:linear-gradient(135deg,#C9A84C,#E2CA7A);color:#0f0f18}
+.upsell-btn.primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(201,168,76,0.3)}
 
 /* ═══ LOCK/BLUR SYSTEM ═══ */
 .locked-zone {
@@ -1480,6 +1488,11 @@ function renderResults(data) {
           <button class="btn-primary" onclick="window.open('https://carta.selenaura.com','_blank')" style="margin-top:14px">Obtener mi Carta Astral</button>
           <button class="btn-secondary" onclick="resetAll()">Analizar mi otra mano</button>
         </div>
+      </div>
+      <div class="upsell-banner fade-in stagger-5">
+        <h3>La quiromancia es una de las 6 disciplinas del Master</h3>
+        <p>Aprende quirologia, tarot, astrologia, numerologia, interpretacion de suenos y mediumnidad en el Master en Guia Espiritual Profesional de SelenaUra Academy.</p>
+        <a href="https://academy.selenaura.com/programa/guia-profesional?utm_source=reading&utm_medium=upsell&utm_campaign=quiro" class="upsell-btn primary" target="_blank" rel="noopener">Master en Guia Espiritual Profesional</a>
       </div>
       <div class="disclaimer"><p>La quirología es una tradición milenaria de autoconocimiento. No constituye asesoramiento médico, psicológico ni terapéutico. Basado en dermatoglifos y textos clásicos de Cheiro (1916) y Benham.</p></div>
     </div>`;
